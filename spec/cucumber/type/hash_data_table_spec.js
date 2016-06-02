@@ -1,4 +1,4 @@
-require('../../support/spec_helper');
+
 
 describe("Cucumber.Type.HashDataTable", function () {
   var Cucumber = requireLib('cucumber');
@@ -21,45 +21,45 @@ describe("Cucumber.Type.HashDataTable", function () {
       hashKeys        = createSpy("hash keys");
       hashValueArrays = createSpy("hash value arrays");
       hashes          = createSpy("hashes");
-      spyOn(hashDataTable, 'getHashKeys').and.returnValue(hashKeys);
-      spyOn(hashDataTable, 'getHashValueArrays').and.returnValue(hashValueArrays);
-      spyOn(hashDataTable, 'createHashesFromKeysAndValueArrays').and.returnValue(hashes);
+      sinon.stub(hashDataTable, 'getHashKeys').returns(hashKeys);
+      sinon.stub(hashDataTable, 'getHashValueArrays').returns(hashValueArrays);
+      sinon.stub(hashDataTable, 'createHashesFromKeysAndValueArrays').returns(hashes);
     });
 
     it("gets the keys of the hashes", function () {
       hashDataTable.raw();
-      expect(hashDataTable.getHashKeys).toHaveBeenCalled();
+      expect(hashDataTable.getHashKeys).to.have.been.called;
     });
 
     it("gets the values of the hashes", function () {
       hashDataTable.raw();
-      expect(hashDataTable.getHashValueArrays).toHaveBeenCalled();
+      expect(hashDataTable.getHashValueArrays).to.have.been.called;
     });
 
     it("creates the hashes from the keys and values", function () {
       hashDataTable.raw();
-      expect(hashDataTable.createHashesFromKeysAndValueArrays).toHaveBeenCalledWith(hashKeys, hashValueArrays);
+      expect(hashDataTable.createHashesFromKeysAndValueArrays).to.have.been.calledWith(hashKeys, hashValueArrays);
     });
 
     it("returns the hashes", function () {
-      expect(hashDataTable.raw()).toBe(hashes);
+      expect(hashDataTable.raw()).to.equal(hashes);
     });
   });
 
   describe("getHashKeys()", function () {
     it("returns the first row of the raw array", function () {
-      expect(hashDataTable.getHashKeys()).toBe(rawArray[0]);
+      expect(hashDataTable.getHashKeys()).to.equal(rawArray[0]);
     });
   });
 
   describe("getHashValueArrays()", function () {
     it("returns all but the first raw of the raw array", function () {
-      expect(hashDataTable.getHashValueArrays()).toEqual([rawArray[1], rawArray[2]]);
+      expect(hashDataTable.getHashValueArrays()).to.eql([rawArray[1], rawArray[2]]);
     });
 
     it("does not alter the original raw array", function () {
       hashDataTable.getHashValueArrays();
-      expect(rawArray.length).toBe(3);
+      expect(rawArray.length).to.equal(3);
     });
   });
 
@@ -70,18 +70,18 @@ describe("Cucumber.Type.HashDataTable", function () {
       keys        = [createSpy("key 1"), createSpy("key 2")];
       valueArrays = [createSpy("value array 1"), createSpy("value array 2")];
       hashes      = [createSpy("first hash"), createSpy("second hash")];
-      spyOn(hashDataTable, 'createHashFromKeysAndValues').and.returnValues.apply(null, hashes);
+      sinon.stub(hashDataTable, 'createHashFromKeysAndValues').and.returnValues.apply(null, hashes);
     });
 
     it("creates a hash for each keys/values", function () {
       hashDataTable.createHashesFromKeysAndValueArrays(keys, valueArrays);
-      expect(hashDataTable.createHashFromKeysAndValues).toHaveBeenCalledWith(keys, valueArrays[0]);
-      expect(hashDataTable.createHashFromKeysAndValues).toHaveBeenCalledWith(keys, valueArrays[1]);
+      expect(hashDataTable.createHashFromKeysAndValues).to.have.been.calledWith(keys, valueArrays[0]);
+      expect(hashDataTable.createHashFromKeysAndValues).to.have.been.calledWith(keys, valueArrays[1]);
     });
 
     it("returns the hashes", function () {
       var actual = hashDataTable.createHashesFromKeysAndValueArrays(keys, valueArrays);
-      expect(actual).toEqual(hashes);
+      expect(actual).to.eql(hashes);
     });
   });
 
@@ -91,7 +91,7 @@ describe("Cucumber.Type.HashDataTable", function () {
       var values   = ["value1", "value2"];
       var actual   = hashDataTable.createHashFromKeysAndValues(keys, values);
       var expected = { key1: "value1", key2: "value2" };
-      expect(actual).toEqual(expected);
+      expect(actual).to.eql(expected);
     });
   });
 });

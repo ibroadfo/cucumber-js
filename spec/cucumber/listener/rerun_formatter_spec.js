@@ -1,4 +1,4 @@
-require('../../support/spec_helper');
+
 
 describe("Cucumber.Listener.RerunFormatter", function () {
   var Cucumber = requireLib('cucumber');
@@ -9,9 +9,9 @@ describe("Cucumber.Listener.RerunFormatter", function () {
   });
 
   function createScenarioResultEvent(status, uri, line) {
-    var scenario = createSpyWithStubs("event", {getLine: line, getUri: uri});
-    var scenarioResult = createSpyWithStubs("event", {getScenario: scenario, getStatus: status});
-    return createSpyWithStubs("event", {getPayloadItem: scenarioResult});
+    var scenario = createStubbedObject({getLine: line, getUri: uri});
+    var scenarioResult = createStubbedObject({getScenario: scenario, getStatus: status});
+    return createStubbedObject({getPayloadItem: scenarioResult});
   }
 
   describe("handleAfterFeaturesEvent()", function () {
@@ -24,7 +24,7 @@ describe("Cucumber.Listener.RerunFormatter", function () {
       });
 
       it("logs nothing", function () {
-        expect(rerunFormatter.getLogs()).toEqual('');
+        expect(rerunFormatter.getLogs()).to.eql('');
       });
     });
 
@@ -37,7 +37,7 @@ describe("Cucumber.Listener.RerunFormatter", function () {
       });
 
       it("logs nothing", function () {
-        expect(rerunFormatter.getLogs()).toEqual('path/to/scenario:1');
+        expect(rerunFormatter.getLogs()).to.eql('path/to/scenario:1');
       });
     });
 
@@ -53,7 +53,7 @@ describe("Cucumber.Listener.RerunFormatter", function () {
       });
 
       it("logs the path to the failed scenarios", function () {
-        expect(rerunFormatter.getLogs()).toEqual('path/to/scenario:1:2');
+        expect(rerunFormatter.getLogs()).to.eql('path/to/scenario:1:2');
       });
     });
 
@@ -69,7 +69,7 @@ describe("Cucumber.Listener.RerunFormatter", function () {
       });
 
       it("logs the path to the failed scenarios", function () {
-        expect(rerunFormatter.getLogs()).toEqual(
+        expect(rerunFormatter.getLogs()).to.eql(
           'path/to/scenario:1' + '\n' +
           'other/path/to/scenario:1'
         );

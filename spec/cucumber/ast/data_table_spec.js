@@ -1,5 +1,3 @@
-require('../../support/spec_helper');
-
 describe("Cucumber.Ast.DataTable", function () {
   var Cucumber = requireLib('cucumber');
 
@@ -31,7 +29,7 @@ describe("Cucumber.Ast.DataTable", function () {
 
     describe("rows", function () {
       it("returns a 2-D array without the header", function () {
-        expect(dataTable.rows()).toEqual([
+        expect(dataTable.rows()).to.eql([
           ['row 1 col 1', 'row 1 col 2'],
           ['row 2 col 1', 'row 2 col 2']
         ]);
@@ -40,7 +38,7 @@ describe("Cucumber.Ast.DataTable", function () {
 
     describe("hashes", function () {
       it("returns an array of object where the keys are the headers", function () {
-        expect(dataTable.hashes()).toEqual([
+        expect(dataTable.hashes()).to.eql([
           {'header 1': 'row 1 col 1', 'header 2': 'row 1 col 2'},
           {'header 1': 'row 2 col 1', 'header 2': 'row 2 col 2'},
         ]);
@@ -69,7 +67,7 @@ describe("Cucumber.Ast.DataTable", function () {
 
     describe("raw", function () {
       it("returns a 2-D array", function () {
-        expect(dataTable.raw()).toEqual([
+        expect(dataTable.raw()).to.eql([
           ['row 1 col 1', 'row 1 col 2'],
           ['row 2 col 1', 'row 2 col 2']
         ]);
@@ -78,7 +76,7 @@ describe("Cucumber.Ast.DataTable", function () {
 
     describe("rowsHash", function () {
       it("returns an object where the keys are the first column", function () {
-        expect(dataTable.rowsHash()).toEqual({
+        expect(dataTable.rowsHash()).to.eql({
           'row 1 col 1': 'row 1 col 2',
           'row 2 col 1': 'row 2 col 2',
         });

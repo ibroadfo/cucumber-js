@@ -12,7 +12,7 @@ describe('Cucumber.SupportCode.StepDefinitionSnippetBuilder.JavaScriptSyntax', f
         '  // comment' + '\n' +
         '  callback(null, \'pending\');' + '\n' +
         '});';
-      expect(actual).toEqual(expected);
+      expect(actual).to.eql(expected);
     });
   });
 });

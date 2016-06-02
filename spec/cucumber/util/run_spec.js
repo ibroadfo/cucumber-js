@@ -1,4 +1,4 @@
-require('../../support/spec_helper');
+
 
 describe("Cucumber.Util.run", function () {
   var Cucumber = requireLib('cucumber');
@@ -20,7 +20,7 @@ describe("Cucumber.Util.run", function () {
 
         it('returns the error', function (done) {
           Cucumber.Util.run(fn, thisArg, argsArray, timeoutInMilliseconds, function(error, result) {
-            expect(error).toEqual('error');
+            expect(error).to.eql('error');
             expect(result).toBeUndefined();
             done();
           });
@@ -35,7 +35,7 @@ describe("Cucumber.Util.run", function () {
         it('returns the return value of the function', function (done) {
           Cucumber.Util.run(fn, thisArg, argsArray, timeoutInMilliseconds, function(error, result) {
             expect(error).toBeNull();
-            expect(result).toEqual('result');
+            expect(result).to.eql('result');
             done();
           });
         });
@@ -53,7 +53,7 @@ describe("Cucumber.Util.run", function () {
 
         it('returns the error', function (done) {
           Cucumber.Util.run(fn, thisArg, argsArray, timeoutInMilliseconds, function(error, result) {
-            expect(error).toEqual('error');
+            expect(error).to.eql('error');
             expect(result).toBeUndefined();
             done();
           });
@@ -69,7 +69,7 @@ describe("Cucumber.Util.run", function () {
 
         it('returns the error', function (done) {
           Cucumber.Util.run(fn, thisArg, argsArray, timeoutInMilliseconds, function(error, result) {
-            expect(error).toEqual('error');
+            expect(error).to.eql('error');
             expect(result).toBeUndefined();
             done();
           });
@@ -86,7 +86,7 @@ describe("Cucumber.Util.run", function () {
         it('returns the what the function calls back with', function (done) {
           Cucumber.Util.run(fn, thisArg, argsArray, timeoutInMilliseconds, function(error, result) {
             expect(error).toBeNull();
-            expect(result).toEqual('result');
+            expect(result).to.eql('result');
             done();
           });
         });
@@ -101,7 +101,7 @@ describe("Cucumber.Util.run", function () {
 
         it('returns timeout as an error', function (done) {
           Cucumber.Util.run(fn, thisArg, argsArray, timeoutInMilliseconds, function(error, result) {
-            expect(error).toEqual('function timed out after 100 milliseconds');
+            expect(error).to.eql('function timed out after 100 milliseconds');
             expect(result).toBeUndefined();
             done();
           });
@@ -119,7 +119,7 @@ describe("Cucumber.Util.run", function () {
 
         it('returns an error that only one interface should be used', function (done) {
           Cucumber.Util.run(fn, thisArg, argsArray, timeoutInMilliseconds, function(error, result) {
-            expect(error).toEqual('function accepts a callback and returns a promise');
+            expect(error).to.eql('function accepts a callback and returns a promise');
             expect(result).toBeUndefined();
             done();
           });
@@ -141,7 +141,7 @@ describe("Cucumber.Util.run", function () {
 
         it('returns the error', function (done) {
           Cucumber.Util.run(fn, thisArg, argsArray, timeoutInMilliseconds, function(error, result) {
-            expect(error).toEqual('error');
+            expect(error).to.eql('error');
             expect(result).toBeUndefined();
             done();
           });
@@ -162,7 +162,7 @@ describe("Cucumber.Util.run", function () {
         it('returns what the promise resolves to', function (done) {
           Cucumber.Util.run(fn, thisArg, argsArray, timeoutInMilliseconds, function(error, result) {
             expect(error).toBeNull();
-            expect(result).toEqual('result');
+            expect(result).to.eql('result');
             done();
           });
         });
@@ -181,7 +181,7 @@ describe("Cucumber.Util.run", function () {
 
         it('returns what the promise rejects as an error', function (done) {
           Cucumber.Util.run(fn, thisArg, argsArray, timeoutInMilliseconds, function(error, result) {
-            expect(error).toEqual('error');
+            expect(error).to.eql('error');
             expect(result).toBeUndefined();
             done();
           });
@@ -201,7 +201,7 @@ describe("Cucumber.Util.run", function () {
 
         it('returns "promise rejected" as an error', function (done) {
           Cucumber.Util.run(fn, thisArg, argsArray, timeoutInMilliseconds, function(error, result) {
-            expect(error).toEqual('Promise rejected');
+            expect(error).to.eql('Promise rejected');
             expect(result).toBeUndefined();
             done();
           });
@@ -221,7 +221,7 @@ describe("Cucumber.Util.run", function () {
 
         it('returns timeout as an error', function (done) {
           Cucumber.Util.run(fn, thisArg, argsArray, timeoutInMilliseconds, function(error, result) {
-            expect(error).toEqual('function timed out after 100 milliseconds');
+            expect(error).to.eql('function timed out after 100 milliseconds');
             expect(result).toBeUndefined();
             done();
           });

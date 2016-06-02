@@ -1,76 +1,85 @@
-require('../../support/spec_helper');
-
 describe("Cucumber.Api.Scenario", function () {
   var Cucumber = requireLib('cucumber');
+  var stream = require('stream');
   var failureException, scenarioResult;
   var keyword, name, description, uri, line, tags, astScenario;
   var scenario;
 
   beforeEach(function () {
-    keyword            = createSpy("scenario keyword");
-    name               = createSpy("scenario name");
-    description        = createSpy("scenario description");
-    uri                = createSpy("scenario uri");
-    line               = createSpy("scenario starting line number");
-    tags               = createSpy("scenario tags");
-    astScenario        = createSpyWithStubs("ast scenario", { getKeyword: keyword, getName: name, getDescription: description, getUri: uri, getLine: line, getTags: tags });
+    keyword = "scenario keyword";
+    name = "scenario name";
+    description = "scenario description";
+    uri = "scenario uri";
+    line = "scenario starting line number";
+    tags = "scenario tags";
+    astScenario = createStubbedObject({
+      getKeyword: keyword,
+      getName: name,
+      getDescription: description,
+      getUri: uri,
+      getLine: line,
+      getTags: tags
+    });
 
-    failureException = createSpy("failure exception");
-    scenarioResult     = createSpyWithStubs("scenario result", { getStatus: null, getFailureException: failureException });
+    failureException = "failure exception"
+    scenarioResult = createStubbedObject({
+      getStatus: null,
+      getFailureException: failureException
+    });
 
     scenario = Cucumber.Api.Scenario(astScenario, scenarioResult);
   });
 
   describe("getKeyword()", function () {
     it("returns the keyword of the scenario", function () {
-      expect(scenario.getKeyword()).toBe(keyword);
+      expect(scenario.getKeyword()).to.equal(keyword);
     });
   });
 
   describe("getName()", function () {
     it("returns the name of the scenario", function () {
-      expect(scenario.getName()).toBe(name);
+      expect(scenario.getName()).to.equal(name);
     });
   });
 
   describe("getDescription()", function () {
     it("returns the description of the scenario", function () {
-      expect(scenario.getDescription()).toBe(description);
+      expect(scenario.getDescription()).to.equal(description);
     });
   });
 
   describe("getUri()", function () {
     it("returns the URI on which the background starts", function () {
-      expect(scenario.getUri()).toBe(uri);
+      expect(scenario.getUri()).to.equal(uri);
     });
   });
 
   describe("getLine()", function () {
     it("returns the line on which the scenario starts", function () {
-      expect(scenario.getLine()).toBe(line);
+      expect(scenario.getLine()).to.equal(line);
     });
   });
 
   describe("getTags()", function () {
     it("returns the tags on the scenario, including inherited tags", function () {
-      expect(scenario.getTags()).toBe(tags);
+      expect(scenario.getTags()).to.equal(tags);
     });
   });
 
   describe("isSuccessful()", function () {
     describe('scenario passed', function () {
       beforeEach(function() {
-        scenarioResult.getStatus.and.returnValue(Cucumber.Status.PASSED);
+        scenarioResult.getStatus.returns(Cucumber.Status.PASSED);
       });
 
       it("returns true", function () {
-        expect(scenario.isSuccessful()).toEqual(true);
+        expect(scenario.isSuccessful()).to.eql(true);
       });
     });
 
     describe('scenario did not pass', function () {
       it("returns false", function () {
-        expect(scenario.isSuccessful()).toEqual(false);
+        expect(scenario.isSuccessful()).to.eql(false);
       });
     });
   });
@@ -78,17 +87,17 @@ describe("Cucumber.Api.Scenario", function () {
   describe("isFailed()", function () {
     describe('scenario failed', function () {
       beforeEach(function() {
-        scenarioResult.getStatus.and.returnValue(Cucumber.Status.FAILED);
+        scenarioResult.getStatus.returns(Cucumber.Status.FAILED);
       });
 
       it("returns true", function () {
-        expect(scenario.isFailed()).toEqual(true);
+        expect(scenario.isFailed()).to.eql(true);
       });
     });
 
     describe('scenario did not fail', function () {
       it("returns false", function () {
-        expect(scenario.isFailed()).toEqual(false);
+        expect(scenario.isFailed()).to.eql(false);
       });
     });
   });
@@ -96,17 +105,17 @@ describe("Cucumber.Api.Scenario", function () {
   describe("isPending()", function () {
     describe('scenario is pending', function () {
       beforeEach(function() {
-        scenarioResult.getStatus.and.returnValue(Cucumber.Status.PENDING);
+        scenarioResult.getStatus.returns(Cucumber.Status.PENDING);
       });
 
       it("returns true", function () {
-        expect(scenario.isPending()).toEqual(true);
+        expect(scenario.isPending()).to.eql(true);
       });
     });
 
     describe('scenario is not pending', function () {
       it("returns false", function () {
-        expect(scenario.isPending()).toEqual(false);
+        expect(scenario.isPending()).to.eql(false);
       });
     });
   });
@@ -114,17 +123,17 @@ describe("Cucumber.Api.Scenario", function () {
   describe("isUndefined()", function () {
     describe('scenario is undefined', function () {
       beforeEach(function() {
-        scenarioResult.getStatus.and.returnValue(Cucumber.Status.UNDEFINED);
+        scenarioResult.getStatus.returns(Cucumber.Status.UNDEFINED);
       });
 
       it("returns true", function () {
-        expect(scenario.isUndefined()).toEqual(true);
+        expect(scenario.isUndefined()).to.eql(true);
       });
     });
 
     describe('scenario is not undefined', function () {
       it("returns false", function () {
-        expect(scenario.isUndefined()).toEqual(false);
+        expect(scenario.isUndefined()).to.eql(false);
       });
     });
   });
@@ -132,24 +141,24 @@ describe("Cucumber.Api.Scenario", function () {
   describe("isSkipped()", function () {
     describe('scenario is skipped', function () {
       beforeEach(function() {
-        scenarioResult.getStatus.and.returnValue(Cucumber.Status.SKIPPED);
+        scenarioResult.getStatus.returns(Cucumber.Status.SKIPPED);
       });
 
       it("returns true", function () {
-        expect(scenario.isSkipped()).toEqual(true);
+        expect(scenario.isSkipped()).to.eql(true);
       });
     });
 
     describe('scenario is not skipped', function () {
       it("returns false", function () {
-        expect(scenario.isSkipped()).toEqual(false);
+        expect(scenario.isSkipped()).to.eql(false);
       });
     });
   });
 
   describe("getException()", function () {
     it("returns the exception raised when running the scenario", function () {
-      expect(scenario.getException()).toBe(failureException);
+      expect(scenario.getException()).to.equal(failureException);
     });
   });
 
@@ -157,73 +166,39 @@ describe("Cucumber.Api.Scenario", function () {
     var mimeType, callback;
 
     beforeEach(function () {
-      mimeType = createSpy("mime type");
-      callback = createSpy("callback");
+      mimeType = "mime type"
+      callback = sinon.spy()
     });
 
     describe("when the data is a stream.Readable", function () {
-      var stream;
+      var passThroughStream;
 
       beforeEach(function () {
-        stream = {pipe: function () {}};
+        passThroughStream = new stream.PassThrough()
       });
 
       it("throws an exception when the mimeType argument is missing", function () {
-        expect(function () { scenario.attach(stream); }).toThrow(new Error("Cucumber.Api.Scenario.attach() expects a mimeType"));
+        expect(function () { scenario.attach(passThroughStream); }).to.throw("Cucumber.Api.Scenario.attach() expects a mimeType");
       });
 
       it("throws an exception when the callback argument is missing", function () {
-        expect(function () { scenario.attach(stream, mimeType); }).toThrow(new Error("Cucumber.Api.Scenario.attach() expects a callback when data is a stream.Readable"));
+        expect(function () { scenario.attach(passThroughStream, mimeType); }).to.throw("Cucumber.Api.Scenario.attach() expects a callback when data is a stream.Readable");
       });
 
-      describe("when it reads the stream", function () {
-        var dataListener, endListener;
-
-        beforeEach(function () {
-          spyOnStub(stream, "on").and.callFake(function (event, listener) {
-            if (event === "data") {
-              dataListener = listener;
-            }
-            else if (event === "end") {
-              endListener = listener;
-            }
-            else {
-              throw new Error("Unrecognised event " + event);
-            }
-          });
-          scenario.attach(stream, mimeType, callback);
+      describe("with a mimeType and a callback", function () {
+        beforeEach(function (done) {
+          scenario.attach(passThroughStream, mimeType, done);
+          passThroughStream.write(new Buffer("first chunk"))
+          passThroughStream.write(new Buffer("second chunk"));
+          passThroughStream.end();
         });
 
-        it("does not call back straight away", function () {
-          expect(callback).not.toHaveBeenCalled();
-        });
-
-        it("listens for the data event on the stream", function () {
-          expect(dataListener).toBeAFunction();
-        });
-
-        it("listens for the end event on the stream", function () {
-          expect(endListener).toBeAFunction();
-        });
-
-        describe("when the stream finishes providing data", function () {
-          beforeEach(function () {
-            dataListener(new Buffer("first chunk"));
-            dataListener(new Buffer("second chunk"));
-            endListener();
-          });
-
-          it("saves the attachment with the contents of the stream", function () {
-            var attachments = scenario.getAttachments();
-            expect(attachments.length).toEqual(1);
-            var attachment = attachments[0];
-            expect(attachment.getData()).toEqual("first chunksecond chunk");
-            expect(attachment.getMimeType()).toEqual(mimeType);
-          });
-
-          it("calls back", function () {
-            expect(callback).toHaveBeenCalled();
-          });
+        it("saves the attachment with the contents of the stream", function () {
+          var attachments = scenario.getAttachments();
+          expect(attachments.length).to.eql(1);
+          var attachment = attachments[0];
+          expect(attachment.getData()).to.eql("first chunksecond chunk");
+          expect(attachment.getMimeType()).to.eql(mimeType);
         });
       });
     });
@@ -236,16 +211,16 @@ describe("Cucumber.Api.Scenario", function () {
       });
 
       it("throws an exception when the mimeType argument is missing", function () {
-        expect(function () { scenario.attach(buffer); }).toThrow(new Error("Cucumber.Api.Scenario.attach() expects a mimeType"));
+        expect(function () { scenario.attach(buffer); }).to.throw("Cucumber.Api.Scenario.attach() expects a mimeType");
       });
 
       it("saves the attachment containing the contents of the buffer", function () {
         scenario.attach(buffer, mimeType);
         var attachments = scenario.getAttachments();
-        expect(attachments.length).toEqual(1);
+        expect(attachments.length).to.eql(1);
         var attachment = attachments[0];
-        expect(attachment.getData()).toEqual("data");
-        expect(attachment.getMimeType()).toEqual(mimeType);
+        expect(attachment.getData()).to.eql("data");
+        expect(attachment.getMimeType()).to.eql(mimeType);
       });
 
       describe("when provided with a callback", function () {
@@ -254,7 +229,7 @@ describe("Cucumber.Api.Scenario", function () {
         });
 
         it("calls back", function () {
-          expect(callback).toHaveBeenCalled();
+          expect(callback).to.have.been.called;
         });
       });
 
@@ -264,7 +239,7 @@ describe("Cucumber.Api.Scenario", function () {
         });
 
         it("does not call back", function () {
-          expect(callback).not.toHaveBeenCalled();
+          expect(callback).not.to.have.been.called;
         });
       });
     });
@@ -279,25 +254,25 @@ describe("Cucumber.Api.Scenario", function () {
       it("saves the attachment containing the string", function () {
         scenario.attach(data, mimeType);
         var attachments = scenario.getAttachments();
-        expect(attachments.length).toEqual(1);
+        expect(attachments.length).to.eql(1);
         var attachment = attachments[0];
-        expect(attachment.getData()).toEqual("data");
-        expect(attachment.getMimeType()).toEqual(mimeType);
+        expect(attachment.getData()).to.eql("data");
+        expect(attachment.getMimeType()).to.eql(mimeType);
       });
 
       it("defaults to the plain text mime type when the mimeType argument is missing", function () {
         scenario.attach(data);
         var attachments = scenario.getAttachments();
-        expect(attachments.length).toEqual(1);
+        expect(attachments.length).to.eql(1);
         var attachment = attachments[0];
-        expect(attachment.getData()).toEqual("data");
-        expect(attachment.getMimeType()).toEqual("text/plain");
+        expect(attachment.getData()).to.eql("data");
+        expect(attachment.getMimeType()).to.eql("text/plain");
       });
 
       it("calls back if a callback is given", function () {
-        var callback = createSpy();
+        var callback = sinon.spy();
         scenario.attach(data, null, callback);
-        expect(callback).toHaveBeenCalled();
+        expect(callback).to.have.been.called;
       });
     });
   });

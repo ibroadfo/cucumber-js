@@ -1,62 +1,60 @@
-require('../../../support/spec_helper');
-
 describe("Cucumber.Ast.Filter.AnyOfTagsRule", function () {
   var Cucumber = requireLib('cucumber');
 
-  var rule, tags;
+  var rule;
 
   beforeEach(function () {
-    tags = createSpy("tags");
+    var tags = ['tag1', 'tag2'];
     rule = Cucumber.Ast.Filter.AnyOfTagsRule(tags);
   });
 
   describe("isSatisfiedByElement()", function () {
-    var _ = require('lodash');
-
-    var element, satisfyingElement;
+    var element, spec1, spec2;
 
     beforeEach(function () {
-      element           = createSpy("element");
-      satisfyingElement = createSpy("whether the element is satisfying");
-      spyOn(_, 'some').and.returnValue(satisfyingElement);
+      element = {};
+      spec1 = createStubbedObject({isMatching: true});
+      spec2 = createStubbedObject({isMatching: true});
+      stub = sinon.stub(Cucumber.Ast.Filter, 'ElementMatchingTagSpec')
+      stub.withArgs('tag1').returns(spec1);
+      stub.withArgs('tag2').returns(spec2);
     });
 
-    it("looks for a tag matching some condition", function () {
-      rule.isSatisfiedByElement(element);
-      expect(_.some).toHaveBeenCalled();
-      expect(_.some).toHaveBeenCalledWithValueAsNthParameter(tags, 1);
-      expect(_.some).toHaveBeenCalledWithAFunctionAsNthParameter(2);
+    afterEach(function() {
+      Cucumber.Ast.Filter.ElementMatchingTagSpec.restore();
     });
 
-    describe("every tag condition", function () {
-      var spec, everyTagConditionFunc, tag, matchingSpec;
-
+    describe('all tags match', function() {
       beforeEach(function () {
-        matchingSpec = createSpy("whether the spec is satisfied or not");
-        tag          = createSpy("tag");
-        spec         = createSpyWithStubs("element matching tag spec", {isMatching: matchingSpec});
-        rule.isSatisfiedByElement(element);
-        everyTagConditionFunc = _.some.calls.mostRecent().args[1];
-        spyOn(Cucumber.Ast.Filter, 'ElementMatchingTagSpec').and.returnValue(spec);
+        spec1.isMatching.returns(true);
+        spec2.isMatching.returns(true);
       });
 
-      it("instantiates an element matching tag spec", function () {
-        everyTagConditionFunc(tag);
-        expect(Cucumber.Ast.Filter.ElementMatchingTagSpec).toHaveBeenCalledWith(tag);
+      it("returns true", function () {
+        expect(rule.isSatisfiedByElement(element)).to.be.true;
+      });
+    })
+
+    describe('some tags match', function() {
+      beforeEach(function () {
+        spec1.isMatching.returns(true);
+        spec2.isMatching.returns(false);
       });
 
-      it("checks whether the element is matching the spec", function () {
-        everyTagConditionFunc(tag);
-        expect(spec.isMatching).toHaveBeenCalledWith(element);
+      it("returns true", function () {
+        expect(rule.isSatisfiedByElement(element)).to.be.true;
+      });
+    })
+
+    describe('no tags match', function() {
+      beforeEach(function () {
+        spec1.isMatching.returns(false);
+        spec2.isMatching.returns(false);
       });
 
-      it("returns match result", function () {
-        expect(everyTagConditionFunc(tag)).toBe(matchingSpec);
+      it("returns true", function () {
+        expect(rule.isSatisfiedByElement(element)).to.be.false;
       });
-    });
-
-    it("returns whether it found a matching tag or not", function () {
-      expect(rule.isSatisfiedByElement(element)).toBe(satisfyingElement);
-    });
+    })
   });
 });

@@ -1,4 +1,4 @@
-require('../../support/spec_helper');
+
 
 describe("Cucumber.SupportCode.Library", function () {
   var Cucumber = requireLib('cucumber');
@@ -10,13 +10,13 @@ describe("Cucumber.SupportCode.Library", function () {
 
   describe("constructor", function () {
     beforeEach(function () {
-      spyOn(Cucumber.SupportCode, 'Hook');
-      spyOn(Cucumber.SupportCode, 'StepDefinition');
+      sinon.stub(Cucumber.SupportCode, 'Hook');
+      sinon.stub(Cucumber.SupportCode, 'StepDefinition');
       library = Cucumber.SupportCode.Library(rawSupportCode);
     });
 
     it("executes the raw support code", function () {
-      expect(rawSupportCode).toHaveBeenCalled();
+      expect(rawSupportCode).to.have.been.called;
     });
 
     it("executes the raw support code with a support code helper as 'this'", function () {
@@ -36,7 +36,7 @@ describe("Cucumber.SupportCode.Library", function () {
         beforeEach(function () {
           code = createSpy("hook code");
           hook = createSpy("hook");
-          Cucumber.SupportCode.Hook.and.returnValue(hook);
+          Cucumber.SupportCode.Hook.returns(hook);
         });
 
         describe("without options", function () {
@@ -45,7 +45,7 @@ describe("Cucumber.SupportCode.Library", function () {
           });
 
           it("creates a before hook with the code", function () {
-            expect(Cucumber.SupportCode.Hook).toHaveBeenCalledWith(code, {}, jasmine.any(String), jasmine.any(Number));
+            expect(Cucumber.SupportCode.Hook).to.have.been.calledWith(code, {}, jasmine.any(String), jasmine.any(Number));
           });
         });
 
@@ -58,7 +58,7 @@ describe("Cucumber.SupportCode.Library", function () {
           });
 
           it("creates a before hook with the code", function () {
-            expect(Cucumber.SupportCode.Hook).toHaveBeenCalledWith(code, options, jasmine.any(String), jasmine.any(Number));
+            expect(Cucumber.SupportCode.Hook).to.have.been.calledWith(code, options, jasmine.any(String), jasmine.any(Number));
           });
         });
 
@@ -67,9 +67,9 @@ describe("Cucumber.SupportCode.Library", function () {
 
           beforeEach(function () {
             scenario = createSpy('scenario');
-            beforeHook1 = createSpyWithStubs("before hook 1", {appliesToScenario: true});
-            beforeHook2 = createSpyWithStubs("before hook 2", {appliesToScenario: false});
-            beforeHook3 = createSpyWithStubs("before hook 3", {appliesToScenario: true});
+            beforeHook1 = createStubbedObject({appliesToScenario: true});
+            beforeHook2 = createStubbedObject({appliesToScenario: false});
+            beforeHook3 = createStubbedObject({appliesToScenario: true});
             Cucumber.SupportCode.Hook.and.returnValues(beforeHook1, beforeHook2, beforeHook3);
             supportCodeHelper.Before();
             supportCodeHelper.Before();
@@ -78,14 +78,14 @@ describe("Cucumber.SupportCode.Library", function () {
 
           it("checks whether each before hook applies to the scenario", function () {
             library.lookupBeforeHooksByScenario(scenario);
-            expect(beforeHook1.appliesToScenario).toHaveBeenCalledWith(scenario);
-            expect(beforeHook2.appliesToScenario).toHaveBeenCalledWith(scenario);
-            expect(beforeHook3.appliesToScenario).toHaveBeenCalledWith(scenario);
+            expect(beforeHook1.appliesToScenario).to.have.been.calledWith(scenario);
+            expect(beforeHook2.appliesToScenario).to.have.been.calledWith(scenario);
+            expect(beforeHook3.appliesToScenario).to.have.been.calledWith(scenario);
           });
 
           it("returns the matching hooks", function () {
             var result = library.lookupBeforeHooksByScenario(scenario);
-            expect(result).toEqual([beforeHook1, beforeHook3]);
+            expect(result).to.eql([beforeHook1, beforeHook3]);
           });
         });
       });
@@ -96,7 +96,7 @@ describe("Cucumber.SupportCode.Library", function () {
         beforeEach(function () {
           code = createSpy("hook code");
           hook = createSpy("hook");
-          Cucumber.SupportCode.Hook.and.returnValue(hook);
+          Cucumber.SupportCode.Hook.returns(hook);
         });
 
         describe("without options", function () {
@@ -105,7 +105,7 @@ describe("Cucumber.SupportCode.Library", function () {
           });
 
           it("creates a before hook with the code", function () {
-            expect(Cucumber.SupportCode.Hook).toHaveBeenCalledWith(code, {}, jasmine.any(String), jasmine.any(Number));
+            expect(Cucumber.SupportCode.Hook).to.have.been.calledWith(code, {}, jasmine.any(String), jasmine.any(Number));
           });
         });
 
@@ -118,7 +118,7 @@ describe("Cucumber.SupportCode.Library", function () {
           });
 
           it("creates a before hook with the code", function () {
-            expect(Cucumber.SupportCode.Hook).toHaveBeenCalledWith(code, options, jasmine.any(String), jasmine.any(Number));
+            expect(Cucumber.SupportCode.Hook).to.have.been.calledWith(code, options, jasmine.any(String), jasmine.any(Number));
           });
         });
 
@@ -127,9 +127,9 @@ describe("Cucumber.SupportCode.Library", function () {
 
           beforeEach(function () {
             scenario = createSpy('scenario');
-            afterHook1 = createSpyWithStubs("after hook 1", {appliesToScenario: true});
-            afterHook2 = createSpyWithStubs("after hook 2", {appliesToScenario: false});
-            afterHook3 = createSpyWithStubs("after hook 3", {appliesToScenario: true});
+            afterHook1 = createStubbedObject({appliesToScenario: true});
+            afterHook2 = createStubbedObject({appliesToScenario: false});
+            afterHook3 = createStubbedObject({appliesToScenario: true});
             Cucumber.SupportCode.Hook.and.returnValues(afterHook1, afterHook2, afterHook3);
             supportCodeHelper.After();
             supportCodeHelper.After();
@@ -138,36 +138,36 @@ describe("Cucumber.SupportCode.Library", function () {
 
           it("checks whether each after hook applies to the scenario", function () {
             library.lookupAfterHooksByScenario(scenario);
-            expect(afterHook1.appliesToScenario).toHaveBeenCalledWith(scenario);
-            expect(afterHook2.appliesToScenario).toHaveBeenCalledWith(scenario);
-            expect(afterHook3.appliesToScenario).toHaveBeenCalledWith(scenario);
+            expect(afterHook1.appliesToScenario).to.have.been.calledWith(scenario);
+            expect(afterHook2.appliesToScenario).to.have.been.calledWith(scenario);
+            expect(afterHook3.appliesToScenario).to.have.been.calledWith(scenario);
           });
 
           it("returns the matching hooks", function () {
             var result = library.lookupAfterHooksByScenario(scenario);
-            expect(result).toEqual([afterHook1, afterHook3]);
+            expect(result).to.eql([afterHook1, afterHook3]);
           });
         });
       });
 
       it("exposes a method to define Given steps", function () {
         expect(supportCodeHelper.Given).toBeAFunction ();
-        expect(supportCodeHelper.Given).toBe(supportCodeHelper.defineStep);
+        expect(supportCodeHelper.Given).to.equal(supportCodeHelper.defineStep);
       });
 
       it("exposes a method to define When steps", function () {
         expect(supportCodeHelper.When).toBeAFunction ();
-        expect(supportCodeHelper.Given).toBe(supportCodeHelper.defineStep);
+        expect(supportCodeHelper.Given).to.equal(supportCodeHelper.defineStep);
       });
 
       it("exposes a method to define Then steps", function () {
         expect(supportCodeHelper.Then).toBeAFunction ();
-        expect(supportCodeHelper.Given).toBe(supportCodeHelper.defineStep);
+        expect(supportCodeHelper.Given).to.equal(supportCodeHelper.defineStep);
       });
 
       it("exposes a method to define any step", function () {
         expect(supportCodeHelper.defineStep).toBeAFunction ();
-        expect(supportCodeHelper.defineStep).toBe(library.defineStep);
+        expect(supportCodeHelper.defineStep).to.equal(library.defineStep);
       });
 
       it("exposes the World constructor", function () {
@@ -190,7 +190,7 @@ describe("Cucumber.SupportCode.Library", function () {
         /* jshint -W083 */
         describe(eventName + ' event register handler method', function () {
           beforeEach(function () {
-            spyOn(library, 'registerHandler');
+            sinon.stub(library, 'registerHandler');
           });
 
           it("is defined as a function", function () {
@@ -200,7 +200,7 @@ describe("Cucumber.SupportCode.Library", function () {
           it("calls registerHandler with the eventName", function () {
             var handler = createSpy('handler');
             supportCodeHelper[eventName](handler);
-            expect(library.registerHandler).toHaveBeenCalled();
+            expect(library.registerHandler).to.have.been.called;
             expect(library.registerHandler).toHaveBeenCalledWithValueAsNthParameter(eventName, 1);
             expect(library.registerHandler).toHaveBeenCalledWithValueAsNthParameter(handler, 2);
           });
@@ -216,10 +216,10 @@ describe("Cucumber.SupportCode.Library", function () {
 
       beforeEach(function () {
         stepName = 'step name';
-        stepDefinition1 = createSpyWithStubs("step definition 1", {matchesStepName: false});
-        stepDefinition2 = createSpyWithStubs("step definition 2", {matchesStepName: true});
-        stepDefinition3 = createSpyWithStubs("step definition 3", {matchesStepName: true});
-        spyOn(Cucumber.SupportCode, 'StepDefinition').and.returnValues(stepDefinition1, stepDefinition2, stepDefinition3);
+        stepDefinition1 = createStubbedObject({matchesStepName: false});
+        stepDefinition2 = createStubbedObject({matchesStepName: true});
+        stepDefinition3 = createStubbedObject({matchesStepName: true});
+        sinon.stub(Cucumber.SupportCode, 'StepDefinition').and.returnValues(stepDefinition1, stepDefinition2, stepDefinition3);
         library.defineStep();
         library.defineStep();
         library.defineStep();
@@ -227,14 +227,14 @@ describe("Cucumber.SupportCode.Library", function () {
 
       it("checks whether each step defintion matches the step name", function () {
         library.lookupStepDefinitionsByName(stepName);
-        expect(stepDefinition1.matchesStepName).toHaveBeenCalledWith(stepName);
-        expect(stepDefinition2.matchesStepName).toHaveBeenCalledWith(stepName);
-        expect(stepDefinition3.matchesStepName).toHaveBeenCalledWith(stepName);
+        expect(stepDefinition1.matchesStepName).to.have.been.calledWith(stepName);
+        expect(stepDefinition2.matchesStepName).to.have.been.calledWith(stepName);
+        expect(stepDefinition3.matchesStepName).to.have.been.calledWith(stepName);
       });
 
       it("returns the matching hooks", function () {
         var result = library.lookupStepDefinitionsByName(stepName);
-        expect(result).toEqual([stepDefinition2, stepDefinition3]);
+        expect(result).to.eql([stepDefinition2, stepDefinition3]);
       });
     });
 
@@ -245,7 +245,7 @@ describe("Cucumber.SupportCode.Library", function () {
         name           = createSpy("step definition name");
         code           = createSpy("step definition code");
         stepDefinition = createSpy("step definition");
-        spyOn(Cucumber.SupportCode, 'StepDefinition').and.returnValue(stepDefinition);
+        sinon.stub(Cucumber.SupportCode, 'StepDefinition').returns(stepDefinition);
       });
 
       describe('without options', function () {
@@ -254,7 +254,7 @@ describe("Cucumber.SupportCode.Library", function () {
         });
 
         it("creates a step definition with the name, empty options, and code", function () {
-          expect(Cucumber.SupportCode.StepDefinition).toHaveBeenCalledWith(name, {}, code, jasmine.any(String), jasmine.any(Number));
+          expect(Cucumber.SupportCode.StepDefinition).to.have.been.calledWith(name, {}, code, jasmine.any(String), jasmine.any(Number));
         });
       });
 
@@ -267,7 +267,7 @@ describe("Cucumber.SupportCode.Library", function () {
         });
 
         it("creates a step definition with the name, options, and code", function () {
-          expect(Cucumber.SupportCode.StepDefinition).toHaveBeenCalledWith(name, options, code, jasmine.any(String), jasmine.any(Number));
+          expect(Cucumber.SupportCode.StepDefinition).to.have.been.calledWith(name, options, code, jasmine.any(String), jasmine.any(Number));
         });
       });
     });
@@ -281,7 +281,7 @@ describe("Cucumber.SupportCode.Library", function () {
     describe('getListeners()', function () {
       describe('without any listeners registered', function () {
         it("returns an empty array", function () {
-          expect(library.getListeners()).toEqual([]);
+          expect(library.getListeners()).to.eql([]);
         });
       });
 
@@ -294,7 +294,7 @@ describe("Cucumber.SupportCode.Library", function () {
         });
 
         it("returns the registered listeners", function () {
-          expect(library.getListeners()).toEqual([listener]);
+          expect(library.getListeners()).to.eql([listener]);
         });
       });
     });
@@ -305,9 +305,9 @@ describe("Cucumber.SupportCode.Library", function () {
       beforeEach(function () {
         eventName = 'eventName';
         handler = createSpy('sampleHandler');
-        listener = createSpyWithStubs("listener",  {setHandlerForEvent: null});
-        spyOn(Cucumber, 'Listener').and.returnValue(listener);
-        spyOn(library, 'registerListener');
+        listener = createStubbedObject("listener",  {setHandlerForEvent: null});
+        sinon.stub(Cucumber, 'Listener').returns(listener);
+        sinon.stub(library, 'registerListener');
         library.registerHandler(eventName, handler);
       });
 
@@ -317,7 +317,7 @@ describe("Cucumber.SupportCode.Library", function () {
       });
 
       it("registers the listener", function () {
-        expect(library.registerListener).toHaveBeenCalledWith(listener);
+        expect(library.registerListener).to.have.been.calledWith(listener);
       });
     });
   });
@@ -330,7 +330,7 @@ describe("Cucumber.SupportCode.Library", function () {
     describe("instantiateNewWorld()", function () {
       it("creates a new instance of the World", function () {
         var world = library.instantiateNewWorld();
-        expect(typeof world).toBe('object');
+        expect(typeof world).to.equal('object');
       });
     });
 
@@ -341,7 +341,7 @@ describe("Cucumber.SupportCode.Library", function () {
         library                    = Cucumber.SupportCode.Library(rawSupportCode);
 
         var world = library.instantiateNewWorld();
-        expect(world.constructor).toBe(customWorldConstructor);
+        expect(world.constructor).to.equal(customWorldConstructor);
       });
     });
   });

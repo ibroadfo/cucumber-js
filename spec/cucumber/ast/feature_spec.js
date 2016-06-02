@@ -1,5 +1,3 @@
-require('../../support/spec_helper');
-
 describe("Cucumber.Ast.Feature", function () {
   var Cucumber = requireLib('cucumber');
   var Gherkin = require('gherkin');
@@ -18,21 +16,27 @@ describe("Cucumber.Ast.Feature", function () {
       uri: 'uri'
     };
 
-    scenario1 = createSpyWithStubs('scenario 1', {setFeature: null});
-    scenario2 = createSpyWithStubs('scenario 2', {setFeature: null});
+    scenario1 = createStubbedObject({setFeature: null});
+    scenario2 = createStubbedObject({setFeature: null});
     var scenarios = [scenario1, scenario2];
 
-    tag1 = createSpy('tag 1');
-    tag2 = createSpy('tag 2');
-    spyOn(Cucumber.Ast, 'Tag').and.returnValues(tag1, tag2);
+    tag1 = 'tag 1';
+    tag2 = 'tag 2';
+    sinon.stub(Cucumber.Ast, 'Tag')
+      .onCall(0).returns(tag1)
+      .onCall(1).returns(tag2);
 
     feature = Cucumber.Ast.Feature(featureData, scenarios);
   });
 
+  afterEach(function() {
+    Cucumber.Ast.Tag.restore();
+  });
+
   describe("constructor", function () {
     it('creates tags', function () {
-      expect(Cucumber.Ast.Tag).toHaveBeenCalledWith({tag1: 'data'});
-      expect(Cucumber.Ast.Tag).toHaveBeenCalledWith({tag2: 'data'});
+      expect(Cucumber.Ast.Tag).to.have.been.calledWith({tag1: 'data'});
+      expect(Cucumber.Ast.Tag).to.have.been.calledWith({tag2: 'data'});
     });
   });
 
@@ -50,7 +54,7 @@ describe("Cucumber.Ast.Feature", function () {
       });
 
       it('returns the keyword', function() {
-        expect(feature.getStepKeywordByLines([3])).toEqual('Given ');
+        expect(feature.getStepKeywordByLines([3])).to.eql('Given ');
       });
     });
 
@@ -65,7 +69,7 @@ describe("Cucumber.Ast.Feature", function () {
       });
 
       it('returns the keyword', function() {
-        expect(feature.getStepKeywordByLines([3])).toEqual('Then ');
+        expect(feature.getStepKeywordByLines([3])).to.eql('Then ');
       });
     });
 
@@ -83,44 +87,44 @@ describe("Cucumber.Ast.Feature", function () {
       });
 
       it('returns the keyword', function() {
-        expect(feature.getStepKeywordByLines([3])).toEqual('When ');
+        expect(feature.getStepKeywordByLines([3])).to.eql('When ');
       });
     });
   });
 
   describe("getKeyword()", function () {
     it("returns the keyword of the feature", function () {
-      expect(feature.getKeyword()).toEqual('keyword');
+      expect(feature.getKeyword()).to.eql('keyword');
     });
   });
 
   describe("getName()", function () {
     it("returns the name of the feature", function () {
-      expect(feature.getName()).toEqual('name');
+      expect(feature.getName()).to.eql('name');
     });
   });
 
   describe("getDescription()", function () {
     it("returns the description of the feature", function () {
-      expect(feature.getDescription()).toEqual('description');
+      expect(feature.getDescription()).to.eql('description');
     });
   });
 
   describe("getUri()", function () {
     it("returns the URI of the feature", function () {
-      expect(feature.getUri()).toEqual('uri');
+      expect(feature.getUri()).to.eql('uri');
     });
   });
 
   describe("getLine()", function () {
     it("returns the line number on which the feature starts", function () {
-      expect(feature.getLine()).toEqual(1);
+      expect(feature.getLine()).to.eql(1);
     });
   });
 
   describe("getTags()", function () {
     it("returns the tags", function () {
-      expect(feature.getTags()).toEqual([tag1, tag2]);
+      expect(feature.getTags()).to.eql([tag1, tag2]);
     });
   });
 });

@@ -6,15 +6,15 @@ describe("Cucumber.Parser", function () {
   var astFilter, featureSources, gherkinParser, gherkinCompiler, parser;
 
   beforeEach(function () {
-    astFilter = createSpyWithStubs("AST filter", {isElementEnrolled: null});
+    astFilter = createStubbedObject({isElementEnrolled: null});
     featureSources = [
       ['first feature uri', 'first feature source'],
       ['second feature uri', 'second feature source']
     ];
-    gherkinParser = createSpyWithStubs("gherkin parser", {parse: null});
-    gherkinCompiler = createSpyWithStubs("gherkin compiler", {compile: null});
-    spyOnStub(Gherkin, 'Parser').and.returnValue(gherkinParser);
-    spyOnStub(Gherkin, 'Compiler').and.returnValue(gherkinCompiler);
+    gherkinParser = createStubbedObject({parse: null});
+    gherkinCompiler = createStubbedObject({compile: null});
+    sinon.stubStub(Gherkin, 'Parser').returns(gherkinParser);
+    sinon.stubStub(Gherkin, 'Compiler').returns(gherkinCompiler);
 
     parser = Cucumber.Parser(featureSources, astFilter);
   });
@@ -42,43 +42,43 @@ describe("Cucumber.Parser", function () {
       scenario4 = createSpy('scenario4');
       gherkinParser.parse.and.returnValues(gherkinDocument1, gherkinDocument2);
       gherkinCompiler.compile.and.returnValues([pickle1Data, pickle2Data], [pickle3Data, pickle4Data]);
-      spyOnStub(Cucumber.Ast, 'Scenario').and.returnValues(scenario1, scenario2, scenario3, scenario4);
-      spyOnStub(Cucumber.Ast, 'Feature').and.returnValues(feature1, feature2);
+      sinon.stubStub(Cucumber.Ast, 'Scenario').and.returnValues(scenario1, scenario2, scenario3, scenario4);
+      sinon.stubStub(Cucumber.Ast, 'Feature').and.returnValues(feature1, feature2);
       astFilter.isElementEnrolled.and.returnValues(true, true, true, false);
       result = parser.parse();
     });
 
     it("parses the feature sources", function () {
-      expect(gherkinParser.parse).toHaveBeenCalledWith('first feature source');
-      expect(gherkinParser.parse).toHaveBeenCalledWith('second feature source');
+      expect(gherkinParser.parse).to.have.been.calledWith('first feature source');
+      expect(gherkinParser.parse).to.have.been.calledWith('second feature source');
     });
 
     it("compiles the feature data", function () {
-      expect(gherkinCompiler.compile).toHaveBeenCalledWith(gherkinDocument1, 'first feature uri');
-      expect(gherkinCompiler.compile).toHaveBeenCalledWith(gherkinDocument2, 'second feature uri');
+      expect(gherkinCompiler.compile).to.have.been.calledWith(gherkinDocument1, 'first feature uri');
+      expect(gherkinCompiler.compile).to.have.been.calledWith(gherkinDocument2, 'second feature uri');
     });
 
     it("creates the scenarios", function () {
-      expect(Cucumber.Ast.Scenario).toHaveBeenCalledWith(pickle1Data);
-      expect(Cucumber.Ast.Scenario).toHaveBeenCalledWith(pickle2Data);
-      expect(Cucumber.Ast.Scenario).toHaveBeenCalledWith(pickle3Data);
-      expect(Cucumber.Ast.Scenario).toHaveBeenCalledWith(pickle4Data);
+      expect(Cucumber.Ast.Scenario).to.have.been.calledWith(pickle1Data);
+      expect(Cucumber.Ast.Scenario).to.have.been.calledWith(pickle2Data);
+      expect(Cucumber.Ast.Scenario).to.have.been.calledWith(pickle3Data);
+      expect(Cucumber.Ast.Scenario).to.have.been.calledWith(pickle4Data);
     });
 
     it("checks if each scenario should be enrolled", function () {
-      expect(astFilter.isElementEnrolled).toHaveBeenCalledWith(scenario1);
-      expect(astFilter.isElementEnrolled).toHaveBeenCalledWith(scenario2);
-      expect(astFilter.isElementEnrolled).toHaveBeenCalledWith(scenario3);
-      expect(astFilter.isElementEnrolled).toHaveBeenCalledWith(scenario4);
+      expect(astFilter.isElementEnrolled).to.have.been.calledWith(scenario1);
+      expect(astFilter.isElementEnrolled).to.have.been.calledWith(scenario2);
+      expect(astFilter.isElementEnrolled).to.have.been.calledWith(scenario3);
+      expect(astFilter.isElementEnrolled).to.have.been.calledWith(scenario4);
     });
 
     it("creates the features", function () {
-      expect(Cucumber.Ast.Feature).toHaveBeenCalledWith({feature1: 'data', uri: 'first feature uri'}, [scenario1, scenario2]);
-      expect(Cucumber.Ast.Feature).toHaveBeenCalledWith({feature2: 'data', uri: 'second feature uri'}, [scenario3]);
+      expect(Cucumber.Ast.Feature).to.have.been.calledWith({feature1: 'data', uri: 'first feature uri'}, [scenario1, scenario2]);
+      expect(Cucumber.Ast.Feature).to.have.been.calledWith({feature2: 'data', uri: 'second feature uri'}, [scenario3]);
     });
 
     it("returns the features", function () {
-      expect(result).toEqual([feature1, feature2]);
+      expect(result).to.eql([feature1, feature2]);
     });
   });
 });

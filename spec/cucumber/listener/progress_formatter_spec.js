@@ -1,4 +1,4 @@
-require('../../support/spec_helper');
+
 
 describe("Cucumber.Listener.ProgressFormatter", function () {
   var Cucumber = requireLib('cucumber');
@@ -8,25 +8,25 @@ describe("Cucumber.Listener.ProgressFormatter", function () {
 
   beforeEach(function () {
     options             = {useColors: true};
-    formatter           = createSpyWithStubs("formatter", {finish: null, log: null});
-    formatterHearMethod = spyOnStub(formatter, 'hear');
+    formatter           = createStubbedObject({finish: null, log: null});
+    formatterHearMethod = sinon.stubStub(formatter, 'hear');
     summaryFormatter    = createSpy("summaryFormatter");
-    spyOn(Cucumber.Listener, 'Formatter').and.returnValue(formatter);
-    spyOn(Cucumber.Listener, 'SummaryFormatter').and.returnValue(summaryFormatter);
+    sinon.stub(Cucumber.Listener, 'Formatter').returns(formatter);
+    sinon.stub(Cucumber.Listener, 'SummaryFormatter').returns(summaryFormatter);
     progressFormatter = Cucumber.Listener.ProgressFormatter(options);
   });
 
   describe("constructor", function () {
     it("creates a formatter", function () {
-      expect(Cucumber.Listener.Formatter).toHaveBeenCalledWith(options);
+      expect(Cucumber.Listener.Formatter).to.have.been.calledWith(options);
     });
 
     it("extends the formatter", function () {
-      expect(progressFormatter).toBe(formatter);
+      expect(progressFormatter).to.equal(formatter);
     });
 
     it("creates a summary formatter", function () {
-      expect(Cucumber.Listener.SummaryFormatter).toHaveBeenCalled();
+      expect(Cucumber.Listener.SummaryFormatter).to.have.been.called;
     });
   });
 
@@ -36,12 +36,12 @@ describe("Cucumber.Listener.ProgressFormatter", function () {
     beforeEach(function () {
       event    = createSpy("event");
       callback = createSpy("callback");
-      spyOnStub(summaryFormatter, 'hear');
+      sinon.stubStub(summaryFormatter, 'hear');
     });
 
     it("tells the summary formatter to listen to the event", function () {
       progressFormatter.hear(event, callback);
-      expect(summaryFormatter.hear).toHaveBeenCalled();
+      expect(summaryFormatter.hear).to.have.been.called;
       expect(summaryFormatter.hear).toHaveBeenCalledWithValueAsNthParameter(event, 1);
       expect(summaryFormatter.hear).toHaveBeenCalledWithAFunctionAsNthParameter(2);
     });
@@ -56,7 +56,7 @@ describe("Cucumber.Listener.ProgressFormatter", function () {
 
       it("tells the formatter to listen to the event", function () {
         summaryFormatterCallback();
-        expect(formatterHearMethod).toHaveBeenCalledWith(event, callback);
+        expect(formatterHearMethod).to.have.been.calledWith(event, callback);
       });
     });
   });
@@ -65,125 +65,125 @@ describe("Cucumber.Listener.ProgressFormatter", function () {
     var event, callback, step, stepResult;
 
     beforeEach(function () {
-      step       = createSpyWithStubs("step", {isHidden: false});
-      stepResult = createSpyWithStubs("step result", {getStatus: undefined, getStep: step});
-      event      = createSpyWithStubs("event", {getPayloadItem: stepResult});
+      step       = createStubbedObject({isHidden: false});
+      stepResult = createStubbedObject({getStatus: undefined, getStep: step});
+      event      = createStubbedObject({getPayloadItem: stepResult});
       callback   = createSpy("callback");
     });
 
     describe("when the is step hidden", function () {
       beforeEach(function () {
-        step.isHidden.and.returnValue(true);
+        step.isHidden.returns(true);
       });
 
       describe("when the step failed", function () {
         beforeEach(function () {
-          stepResult.getStatus.and.returnValue(Cucumber.Status.FAILED);
+          stepResult.getStatus.returns(Cucumber.Status.FAILED);
           progressFormatter.handleStepResultEvent(event, callback);
         });
 
         it("logs the step result", function () {
-          expect(progressFormatter.log).toHaveBeenCalledWith(colors.red('F'));
+          expect(progressFormatter.log).to.have.been.calledWith(colors.red('F'));
         });
 
         it("calls back", function () {
-          expect(callback).toHaveBeenCalled();
+          expect(callback).to.have.been.called;
         });
       });
 
       describe("when the step passed", function () {
         beforeEach(function () {
-          stepResult.getStatus.and.returnValue(Cucumber.Status.PASSED);
+          stepResult.getStatus.returns(Cucumber.Status.PASSED);
           progressFormatter.handleStepResultEvent(event, callback);
         });
 
         it("does not log", function () {
-          expect(progressFormatter.log).not.toHaveBeenCalled();
+          expect(progressFormatter.log).not.to.have.been.called;
         });
 
         it("calls back", function () {
-          expect(callback).toHaveBeenCalled();
+          expect(callback).to.have.been.called;
         });
       });
     });
 
     describe("when the is step not hidden", function () {
       beforeEach(function () {
-        step.isHidden.and.returnValue(false);
+        step.isHidden.returns(false);
       });
 
       describe("when the step failed", function () {
         beforeEach(function () {
-          stepResult.getStatus.and.returnValue(Cucumber.Status.FAILED);
+          stepResult.getStatus.returns(Cucumber.Status.FAILED);
           progressFormatter.handleStepResultEvent(event, callback);
         });
 
         it("logs the step result", function () {
-          expect(progressFormatter.log).toHaveBeenCalledWith(colors.red('F'));
+          expect(progressFormatter.log).to.have.been.calledWith(colors.red('F'));
         });
 
         it("calls back", function () {
-          expect(callback).toHaveBeenCalled();
+          expect(callback).to.have.been.called;
         });
       });
 
       describe("when the step passed", function () {
         beforeEach(function () {
-          stepResult.getStatus.and.returnValue(Cucumber.Status.PASSED);
+          stepResult.getStatus.returns(Cucumber.Status.PASSED);
           progressFormatter.handleStepResultEvent(event, callback);
         });
 
         it("logs the step result", function () {
-          expect(progressFormatter.log).toHaveBeenCalledWith(colors.green('.'));
+          expect(progressFormatter.log).to.have.been.calledWith(colors.green('.'));
         });
 
         it("calls back", function () {
-          expect(callback).toHaveBeenCalled();
+          expect(callback).to.have.been.called;
         });
       });
 
       describe("when the step is pending", function () {
         beforeEach(function () {
-          stepResult.getStatus.and.returnValue(Cucumber.Status.PENDING);
+          stepResult.getStatus.returns(Cucumber.Status.PENDING);
           progressFormatter.handleStepResultEvent(event, callback);
         });
 
         it("logs the step result", function () {
-          expect(progressFormatter.log).toHaveBeenCalledWith(colors.yellow('P'));
+          expect(progressFormatter.log).to.have.been.calledWith(colors.yellow('P'));
         });
 
         it("calls back", function () {
-          expect(callback).toHaveBeenCalled();
+          expect(callback).to.have.been.called;
         });
       });
 
       describe("when the step was skipped", function () {
         beforeEach(function () {
-          stepResult.getStatus.and.returnValue(Cucumber.Status.SKIPPED);
+          stepResult.getStatus.returns(Cucumber.Status.SKIPPED);
           progressFormatter.handleStepResultEvent(event, callback);
         });
 
         it("logs the step result", function () {
-          expect(progressFormatter.log).toHaveBeenCalledWith(colors.cyan('-'));
+          expect(progressFormatter.log).to.have.been.calledWith(colors.cyan('-'));
         });
 
         it("calls back", function () {
-          expect(callback).toHaveBeenCalled();
+          expect(callback).to.have.been.called;
         });
       });
 
       describe("when the step was undefined", function () {
         beforeEach(function () {
-          stepResult.getStatus.and.returnValue(Cucumber.Status.UNDEFINED);
+          stepResult.getStatus.returns(Cucumber.Status.UNDEFINED);
           progressFormatter.handleStepResultEvent(event, callback);
         });
 
         it("logs the step result", function () {
-          expect(progressFormatter.log).toHaveBeenCalledWith(colors.yellow('U'));
+          expect(progressFormatter.log).to.have.been.calledWith(colors.yellow('U'));
         });
 
         it("calls back", function () {
-          expect(callback).toHaveBeenCalled();
+          expect(callback).to.have.been.called;
         });
       });
     });
@@ -196,27 +196,27 @@ describe("Cucumber.Listener.ProgressFormatter", function () {
       event       = createSpy("event");
       callback    = createSpy("callback");
       summaryLogs = createSpy("summary logs");
-      spyOnStub(summaryFormatter, 'getLogs').and.returnValue(summaryLogs);
+      sinon.stubStub(summaryFormatter, 'getLogs').returns(summaryLogs);
     });
 
     it("gets the summary", function () {
       progressFormatter.handleAfterFeaturesEvent(event, callback);
-      expect(summaryFormatter.getLogs).toHaveBeenCalled();
+      expect(summaryFormatter.getLogs).to.have.been.called;
     });
 
     it("logs two line feeds", function () {
       progressFormatter.handleAfterFeaturesEvent(event, callback);
-      expect(progressFormatter.log).toHaveBeenCalledWith("\n\n");
+      expect(progressFormatter.log).to.have.been.calledWith("\n\n");
     });
 
     it("logs the summary", function () {
       progressFormatter.handleAfterFeaturesEvent(event, callback);
-      expect(progressFormatter.log).toHaveBeenCalledWith(summaryLogs);
+      expect(progressFormatter.log).to.have.been.calledWith(summaryLogs);
     });
 
     it("calls finish with the callback", function () {
       progressFormatter.handleAfterFeaturesEvent(event, callback);
-      expect(progressFormatter.finish).toHaveBeenCalledWith(callback);
+      expect(progressFormatter.finish).to.have.been.calledWith(callback);
     });
   });
 });

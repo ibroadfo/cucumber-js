@@ -1,4 +1,4 @@
-require('../../support/spec_helper');
+
 
 describe("Cucumber.Runtime.StepResult", function () {
   var Cucumber = requireLib('cucumber');
@@ -20,32 +20,32 @@ describe("Cucumber.Runtime.StepResult", function () {
 
   describe("getStep()", function () {
     it("returns the step passed to the constructor", function () {
-      expect(stepResult.getStep()).toBe(step);
+      expect(stepResult.getStep()).to.equal(step);
     });
   });
 
   describe("getDuration()", function () {
     it("returns the duration passed to the constructor", function () {
-      expect(stepResult.getDuration()).toBe(123);
+      expect(stepResult.getDuration()).to.equal(123);
     });
   });
 
   describe("getStatus()", function () {
     it("returns the step passed to the constructor", function () {
-      expect(stepResult.getStatus()).toBe(status);
+      expect(stepResult.getStatus()).to.equal(status);
     });
   });
 
   describe("getFailureException()", function () {
     it("returns the step passed to the constructor", function () {
-      expect(stepResult.getFailureException()).toBe(failureException);
+      expect(stepResult.getFailureException()).to.equal(failureException);
     });
   });
 
   describe("hasAttachments()", function () {
     describe("when there are no attachments", function () {
       it("returns false", function () {
-        expect(stepResult.hasAttachments()).toBeFalsy();
+        expect(stepResult.hasAttachments()).not.to.be.ok;
       });
     });
 
@@ -55,14 +55,14 @@ describe("Cucumber.Runtime.StepResult", function () {
       });
 
       it("returns true", function () {
-        expect(stepResult.hasAttachments()).toBeTruthy();
+        expect(stepResult.hasAttachments()).to.be.ok;
       });
     });
   });
 
   describe("getAttachments()", function () {
     it("returns the attachments passed to the constructor", function () {
-      expect(stepResult.getAttachments()).toBe(attachments);
+      expect(stepResult.getAttachments()).to.equal(attachments);
     });
   });
 });

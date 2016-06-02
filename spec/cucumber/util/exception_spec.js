@@ -1,5 +1,5 @@
 /* jshint -W117 */
-require('../../support/spec_helper');
+
 
 describe("Cucumber.Util.Arguments", function () {
   var UNCAUGHT_EXCEPTION_EVENT = 'uncaughtException';
@@ -12,12 +12,12 @@ describe("Cucumber.Util.Arguments", function () {
     describe("in a node environment", function () {
       beforeEach(function () {
         exceptionHandler = createSpy("exception handler");
-        spyOn(process, 'on');
+        sinon.stub(process, 'on');
       });
 
       it("registers the exception handler to the process's 'uncaughtException' event", function () {
         Cucumber.Util.Exception.registerUncaughtExceptionHandler(exceptionHandler);
-        expect(process.on).toHaveBeenCalledWith(UNCAUGHT_EXCEPTION_EVENT, exceptionHandler);
+        expect(process.on).to.have.been.calledWith(UNCAUGHT_EXCEPTION_EVENT, exceptionHandler);
       });
     });
 
@@ -37,7 +37,7 @@ describe("Cucumber.Util.Arguments", function () {
 
       it("registers the exception handler to the windows's 'onerror' event handler", function () {
         Cucumber.Util.Exception.registerUncaughtExceptionHandler(exceptionHandler);
-        expect(window.onerror).toBe(exceptionHandler);
+        expect(window.onerror).to.equal(exceptionHandler);
       });
     });
   });
@@ -48,12 +48,12 @@ describe("Cucumber.Util.Arguments", function () {
     describe("in a node environment", function () {
       beforeEach(function () {
         exceptionHandler = createSpy("exception handler");
-        spyOn(process, 'removeListener');
+        sinon.stub(process, 'removeListener');
       });
 
       it("registers the exception handler to the process's 'uncaughtException' event", function () {
         Cucumber.Util.Exception.unregisterUncaughtExceptionHandler(exceptionHandler);
-        expect(process.removeListener).toHaveBeenCalledWith(UNCAUGHT_EXCEPTION_EVENT, exceptionHandler);
+        expect(process.removeListener).to.have.been.calledWith(UNCAUGHT_EXCEPTION_EVENT, exceptionHandler);
       });
     });
 
@@ -64,7 +64,7 @@ describe("Cucumber.Util.Arguments", function () {
         previousRemoveListener = process.removeListener;
         process.removeListener = void(0);
         exceptionHandler = createSpy("exception handler");
-        global.window = createSpyWithStubs("window", {onerror: exceptionHandler});
+        global.window = createStubbedObject({onerror: exceptionHandler});
       });
 
       afterEach(function () {

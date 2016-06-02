@@ -1,4 +1,4 @@
-require('../../support/spec_helper');
+
 
 describe("Cucumber.Runtime.Event", function () {
   var Cucumber = requireLib('cucumber');
@@ -26,7 +26,7 @@ describe("Cucumber.Runtime.Event", function () {
 
     describe("getName()", function () {
       it("returns the name of the event", function () {
-        expect(event.getName()).toBe(name);
+        expect(event.getName()).to.equal(name);
       });
     });
 
@@ -35,17 +35,17 @@ describe("Cucumber.Runtime.Event", function () {
 
       beforeEach(function () {
         preEvent = createSpy("Pre-event (before)");
-        spyOn(Cucumber.Runtime, 'Event').and.returnValue(preEvent);
+        sinon.stub(Cucumber.Runtime, 'Event').returns(preEvent);
       });
 
       it("creates a new event with the before prefix prepended to the event name and the same payload", function () {
         var newName = 'Before' + name;
         event.replicateAsPreEvent();
-        expect(Cucumber.Runtime.Event).toHaveBeenCalledWith(newName, payload);
+        expect(Cucumber.Runtime.Event).to.have.been.calledWith(newName, payload);
       });
 
       it("returns the new event", function () {
-        expect(event.replicateAsPreEvent()).toBe(preEvent);
+        expect(event.replicateAsPreEvent()).to.equal(preEvent);
       });
     });
 
@@ -54,25 +54,25 @@ describe("Cucumber.Runtime.Event", function () {
 
       beforeEach(function () {
         postEvent = createSpy("Post-event (after)");
-        spyOn(Cucumber.Runtime, 'Event').and.returnValue(postEvent);
+        sinon.stub(Cucumber.Runtime, 'Event').returns(postEvent);
       });
 
       it("creates a new event with the after prefix prepended to the event name and the same payload", function () {
         var newName = 'After' + name;
         event.replicateAsPostEvent();
-        expect(Cucumber.Runtime.Event).toHaveBeenCalledWith(newName, payload);
+        expect(Cucumber.Runtime.Event).to.have.been.calledWith(newName, payload);
       });
 
       it("returns the new event", function () {
-        expect(event.replicateAsPostEvent()).toBe(postEvent);
+        expect(event.replicateAsPostEvent()).to.equal(postEvent);
       });
     });
 
     describe("getPayloadItem()", function () {
       it("returns the requested item from the payload", function () {
-        expect(event.getPayloadItem('firstItem')).toBe(payloadItems[0]);
-        expect(event.getPayloadItem('secondItem')).toBe(payloadItems[1]);
-        expect(event.getPayloadItem('thirdItem')).toBe(payloadItems[2]);
+        expect(event.getPayloadItem('firstItem')).to.equal(payloadItems[0]);
+        expect(event.getPayloadItem('secondItem')).to.equal(payloadItems[1]);
+        expect(event.getPayloadItem('thirdItem')).to.equal(payloadItems[2]);
       });
 
       it("returns undefined when the item does not exist in the payload", function () {
@@ -82,11 +82,11 @@ describe("Cucumber.Runtime.Event", function () {
 
     describe("occurredOn()", function () {
       it("returns true when the received event name matches the actual event name", function () {
-        expect(event.occurredOn(name)).toBeTruthy();
+        expect(event.occurredOn(name)).to.be.ok;
       });
 
       it("returns false when the received event name does not match the actual event name", function () {
-        expect(event.occurredOn("SomeOtherEvent")).toBeFalsy();
+        expect(event.occurredOn("SomeOtherEvent")).not.to.be.ok;
       });
     });
 
@@ -97,11 +97,11 @@ describe("Cucumber.Runtime.Event", function () {
       });
 
       it("returns true when the received event name prefixed by the 'after' keyword matches the actual event name", function () {
-        expect(event.occurredAfter(name)).toBeTruthy();
+        expect(event.occurredAfter(name)).to.be.ok;
       });
 
       it("returns false when the received event name prefixed by the 'after' keyword does not match the actual event name", function () {
-        expect(event.occurredAfter('SomeOtherEvent')).toBeFalsy();
+        expect(event.occurredAfter('SomeOtherEvent')).not.to.be.ok;
       });
     });
   });

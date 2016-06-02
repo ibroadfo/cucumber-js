@@ -1,4 +1,4 @@
-require('../../support/spec_helper');
+
 
 describe("Cucumber.Ast.Tag", function () {
   var Cucumber = requireLib('cucumber');
@@ -14,13 +14,13 @@ describe("Cucumber.Ast.Tag", function () {
 
   describe("getName()", function () {
     it("returns the name", function () {
-      expect(tag.getName()).toEqual('name');
+      expect(tag.getName()).to.eql('name');
     });
   });
 
   describe("getLine()", function () {
     it("returns the line", function () {
-      expect(tag.getLine()).toEqual(1);
+      expect(tag.getLine()).to.eql(1);
     });
   });
 });

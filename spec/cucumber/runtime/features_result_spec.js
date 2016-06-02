@@ -1,4 +1,4 @@
-require('../../support/spec_helper');
+
 
 describe("Cucumber.Runtime.FeaturesResult", function () {
   var Cucumber = requireLib('cucumber');
@@ -15,7 +15,7 @@ describe("Cucumber.Runtime.FeaturesResult", function () {
     });
 
     it('is successful by default', function() {
-      expect(featuresResult.isSuccessful()).toEqual(true);
+      expect(featuresResult.isSuccessful()).to.eql(true);
     });
 
     describe('after a passing scenario', function () {
@@ -26,7 +26,7 @@ describe("Cucumber.Runtime.FeaturesResult", function () {
       });
 
       it('is successful', function() {
-        expect(featuresResult.isSuccessful()).toEqual(true);
+        expect(featuresResult.isSuccessful()).to.eql(true);
       });
     });
 
@@ -38,7 +38,7 @@ describe("Cucumber.Runtime.FeaturesResult", function () {
       });
 
       it('is not successful', function() {
-        expect(featuresResult.isSuccessful()).toEqual(false);
+        expect(featuresResult.isSuccessful()).to.eql(false);
       });
     });
 
@@ -50,7 +50,7 @@ describe("Cucumber.Runtime.FeaturesResult", function () {
       });
 
       it('is not successful', function() {
-        expect(featuresResult.isSuccessful()).toEqual(false);
+        expect(featuresResult.isSuccessful()).to.eql(false);
       });
     });
 
@@ -62,7 +62,7 @@ describe("Cucumber.Runtime.FeaturesResult", function () {
       });
 
       it('is not successful', function() {
-        expect(featuresResult.isSuccessful()).toEqual(false);
+        expect(featuresResult.isSuccessful()).to.eql(false);
       });
     });
 
@@ -74,7 +74,7 @@ describe("Cucumber.Runtime.FeaturesResult", function () {
       });
 
       it('is not successful', function() {
-        expect(featuresResult.isSuccessful()).toEqual(false);
+        expect(featuresResult.isSuccessful()).to.eql(false);
       });
     });
   });
@@ -85,7 +85,7 @@ describe("Cucumber.Runtime.FeaturesResult", function () {
     });
 
     it('is successful by default', function() {
-      expect(featuresResult.isSuccessful()).toEqual(true);
+      expect(featuresResult.isSuccessful()).to.eql(true);
     });
 
     describe('after a passing scenario', function () {
@@ -96,7 +96,7 @@ describe("Cucumber.Runtime.FeaturesResult", function () {
       });
 
       it('is successful', function() {
-        expect(featuresResult.isSuccessful()).toEqual(true);
+        expect(featuresResult.isSuccessful()).to.eql(true);
       });
     });
 
@@ -108,7 +108,7 @@ describe("Cucumber.Runtime.FeaturesResult", function () {
       });
 
       it('is not successful', function() {
-        expect(featuresResult.isSuccessful()).toEqual(false);
+        expect(featuresResult.isSuccessful()).to.eql(false);
       });
     });
 
@@ -120,7 +120,7 @@ describe("Cucumber.Runtime.FeaturesResult", function () {
       });
 
       it('is not successful', function() {
-        expect(featuresResult.isSuccessful()).toEqual(false);
+        expect(featuresResult.isSuccessful()).to.eql(false);
       });
     });
 
@@ -132,7 +132,7 @@ describe("Cucumber.Runtime.FeaturesResult", function () {
       });
 
       it('is successful', function() {
-        expect(featuresResult.isSuccessful()).toEqual(true);
+        expect(featuresResult.isSuccessful()).to.eql(true);
       });
     });
 
@@ -144,7 +144,7 @@ describe("Cucumber.Runtime.FeaturesResult", function () {
       });
 
       it('is successful', function() {
-        expect(featuresResult.isSuccessful()).toEqual(true);
+        expect(featuresResult.isSuccessful()).to.eql(true);
       });
     });
   });

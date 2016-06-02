@@ -1,4 +1,4 @@
-require('../../support/spec_helper');
+
 
 describe("Cucumber.Ast.Step", function () {
   var Cucumber = requireLib('cucumber');
@@ -12,309 +12,309 @@ describe("Cucumber.Ast.Step", function () {
     };
     step = Cucumber.Ast.Step(stepData);
 
-    feature = createSpyWithStubs('feature', {getStepKeywordByLines: 'keyword'});
-    var scenario = createSpyWithStubs('scenario', {getFeature: feature});
+    feature = createStubbedObject({getStepKeywordByLines: 'keyword'});
+    var scenario = createStubbedObject({getFeature: feature});
     step.setScenario(scenario);
   });
 
   describe("getKeyword()", function () {
     it("returns the keyword of the step", function () {
-      expect(step.getKeyword()).toEqual('keyword');
+      expect(step.getKeyword()).to.eql('keyword');
     });
   });
 
   describe("getName()", function () {
     it("returns the name of the step", function () {
-      expect(step.getName()).toEqual('text');
+      expect(step.getName()).to.eql('text');
     });
   });
 
   describe("isHidden()", function () {
     it("returns false for a non hook step", function () {
-      expect(step.isHidden()).toBe(false);
+      expect(step.isHidden()).to.equal(false);
     });
   });
 
   describe("hasUri()", function () {
     it("returns true", function () {
-      expect(step.hasUri()).toBe(true);
+      expect(step.hasUri()).to.equal(true);
     });
   });
 
   describe("getLine()", function () {
     it("returns the last line number", function () {
-      expect(step.getLine()).toEqual(2);
+      expect(step.getLine()).to.eql(2);
     });
   });
 
   describe("getLines()", function () {
     it("returns all the line numbers", function () {
-      expect(step.getLines()).toEqual([1, 2]);
+      expect(step.getLines()).to.eql([1, 2]);
     });
   });
 
   describe("hasPreviousStep() [setPreviousStep()]", function () {
     it("returns true when a previous step was set", function () {
-      var previousStep = createSpy("previous step");
+      var previousStep = "previous step";
       step.setPreviousStep(previousStep);
-      expect(step.hasPreviousStep()).toBe(true);
+      expect(step.hasPreviousStep()).to.equal(true);
     });
 
     it("returns false when no previous step was set", function () {
-      expect(step.hasPreviousStep()).toBe(false);
+      expect(step.hasPreviousStep()).to.equal(false);
     });
   });
 
   describe("getPreviousStep() [setPreviousStep()]", function () {
     it("returns the previous step that was set as such", function () {
-      var previousStep = createSpy("previous step");
+      var previousStep = "previous step";
       step.setPreviousStep(previousStep);
-      expect(step.getPreviousStep()).toBe(previousStep);
+      expect(step.getPreviousStep()).to.equal(previousStep);
     });
   });
 
   describe("isOutcomeStep()", function () {
     beforeEach(function () {
-      spyOn(step, 'hasOutcomeStepKeyword');
-      spyOn(step, 'isRepeatingOutcomeStep');
+      sinon.stub(step, 'hasOutcomeStepKeyword');
+      sinon.stub(step, 'isRepeatingOutcomeStep');
     });
 
     it("checks whether the keyword is an outcome step keyword", function () {
       step.isOutcomeStep();
-      expect(step.hasOutcomeStepKeyword).toHaveBeenCalled();
+      expect(step.hasOutcomeStepKeyword).to.have.been.called;
     });
 
     it("is truthy when the keyword is an outcome step keyword", function () {
-      step.hasOutcomeStepKeyword.and.returnValue(true);
-      expect(step.isOutcomeStep()).toBeTruthy();
+      step.hasOutcomeStepKeyword.returns(true);
+      expect(step.isOutcomeStep()).to.be.ok;
     });
 
     describe("when the keyword is not an outcome step keyword", function () {
       beforeEach(function () {
-        step.hasOutcomeStepKeyword.and.returnValue(false);
+        step.hasOutcomeStepKeyword.returns(false);
       });
 
       it("checks whether the keyword is repeating an outcome step", function () {
         step.isOutcomeStep();
-        expect(step.isRepeatingOutcomeStep).toHaveBeenCalled();
+        expect(step.isRepeatingOutcomeStep).to.have.been.called;
       });
 
       it("it is true when the step is repeating an outcome step", function () {
-        step.isRepeatingOutcomeStep.and.returnValue(true);
-        expect(step.isOutcomeStep()).toBe(true);
+        step.isRepeatingOutcomeStep.returns(true);
+        expect(step.isOutcomeStep()).to.equal(true);
       });
     });
   });
 
   describe("isEventStep()", function () {
     beforeEach(function () {
-      spyOn(step, 'hasEventStepKeyword');
-      spyOn(step, 'isRepeatingEventStep');
+      sinon.stub(step, 'hasEventStepKeyword');
+      sinon.stub(step, 'isRepeatingEventStep');
     });
 
     it("checks whether the keyword is an event step keyword", function () {
       step.isEventStep();
-      expect(step.hasEventStepKeyword).toHaveBeenCalled();
+      expect(step.hasEventStepKeyword).to.have.been.called;
     });
 
     it("is truthy when the keyword is an event step keyword", function () {
-      step.hasEventStepKeyword.and.returnValue(true);
-      expect(step.isEventStep()).toBeTruthy();
+      step.hasEventStepKeyword.returns(true);
+      expect(step.isEventStep()).to.be.ok;
     });
 
     describe("when the keyword is not an event step keyword", function () {
       beforeEach(function () {
-        step.hasEventStepKeyword.and.returnValue(false);
+        step.hasEventStepKeyword.returns(false);
       });
 
       it("checks whether the keyword is repeating an event step", function () {
         step.isEventStep();
-        expect(step.isRepeatingEventStep).toHaveBeenCalled();
+        expect(step.isRepeatingEventStep).to.have.been.called;
       });
 
       it("it is true when the step is repeating an event step", function () {
-        step.isRepeatingEventStep.and.returnValue(true);
-        expect(step.isEventStep()).toBeTruthy();
+        step.isRepeatingEventStep.returns(true);
+        expect(step.isEventStep()).to.be.ok;
       });
     });
   });
 
   describe("hasOutcomeStepKeyword()", function () {
     it("returns true when the keyword is 'Then '", function () {
-      feature.getStepKeywordByLines.and.returnValue('Then ');
-      expect(step.hasOutcomeStepKeyword()).toBeTruthy();
+      feature.getStepKeywordByLines.returns('Then ');
+      expect(step.hasOutcomeStepKeyword()).to.be.ok;
     });
 
     it("returns false when the keyword is not 'Then '", function () {
-      expect(step.hasOutcomeStepKeyword()).toBeFalsy();
+      expect(step.hasOutcomeStepKeyword()).not.to.be.ok;
     });
   });
 
   describe("hasEventStepKeyword()", function () {
     it("returns true when the keyword is 'When '", function () {
-      feature.getStepKeywordByLines.and.returnValue('When ');
-      expect(step.hasEventStepKeyword()).toBeTruthy();
+      feature.getStepKeywordByLines.returns('When ');
+      expect(step.hasEventStepKeyword()).to.be.ok;
     });
 
     it("returns false when the keyword is not 'When '", function () {
-      expect(step.hasEventStepKeyword()).toBeFalsy();
+      expect(step.hasEventStepKeyword()).not.to.be.ok;
     });
   });
 
   describe("isRepeatingOutcomeStep()", function () {
     beforeEach(function () {
-      spyOn(step, 'hasRepeatStepKeyword');
-      spyOn(step, 'isPrecededByOutcomeStep');
+      sinon.stub(step, 'hasRepeatStepKeyword');
+      sinon.stub(step, 'isPrecededByOutcomeStep');
     });
 
     it("checks whether the keyword is a repeating keyword", function () {
       step.isRepeatingOutcomeStep();
-      expect(step.hasRepeatStepKeyword).toHaveBeenCalled();
+      expect(step.hasRepeatStepKeyword).to.have.been.called;
     });
 
     describe("when the keyword is a repeating keyword", function () {
       beforeEach(function () {
-        step.hasRepeatStepKeyword.and.returnValue(true);
+        step.hasRepeatStepKeyword.returns(true);
       });
 
       it("checks whether the preceding step is an outcome step", function () {
         step.isRepeatingOutcomeStep();
-        expect(step.isPrecededByOutcomeStep).toHaveBeenCalled();
+        expect(step.isPrecededByOutcomeStep).to.have.been.called;
       });
 
       describe("when the step is preceded by an outcome step", function () {
         beforeEach(function () {
-          step.isPrecededByOutcomeStep.and.returnValue(true);
+          step.isPrecededByOutcomeStep.returns(true);
         });
 
         it("returns true", function () {
-          expect(step.isRepeatingOutcomeStep()).toBe(true);
+          expect(step.isRepeatingOutcomeStep()).to.equal(true);
         });
       });
 
       describe("when the step is not preceded by an outcome step", function () {
         beforeEach(function () {
-          step.isPrecededByOutcomeStep.and.returnValue(false);
+          step.isPrecededByOutcomeStep.returns(false);
         });
 
         it("returns false", function () {
-          expect(step.isRepeatingOutcomeStep()).toBe(false);
+          expect(step.isRepeatingOutcomeStep()).to.equal(false);
         });
       });
     });
 
     describe("when the keyword is not a repeating keyword", function () {
       beforeEach(function () {
-        step.hasRepeatStepKeyword.and.returnValue(false);
+        step.hasRepeatStepKeyword.returns(false);
       });
 
       it("does not check whether the preceding step is an outcome step", function () {
         step.isRepeatingOutcomeStep();
-        expect(step.isPrecededByOutcomeStep).not.toHaveBeenCalled();
+        expect(step.isPrecededByOutcomeStep).not.to.have.been.called;
       });
 
       it("returns false", function () {
-        expect(step.isRepeatingOutcomeStep()).toBe(false);
+        expect(step.isRepeatingOutcomeStep()).to.equal(false);
       });
     });
   });
 
   describe("isRepeatingEventStep()", function () {
     beforeEach(function () {
-      spyOn(step, 'hasRepeatStepKeyword');
-      spyOn(step, 'isPrecededByEventStep');
+      sinon.stub(step, 'hasRepeatStepKeyword');
+      sinon.stub(step, 'isPrecededByEventStep');
     });
 
     it("checks whether the keyword is a repeating keyword", function () {
       step.isRepeatingEventStep();
-      expect(step.hasRepeatStepKeyword).toHaveBeenCalled();
+      expect(step.hasRepeatStepKeyword).to.have.been.called;
     });
 
     describe("when the keyword is a repeating keyword", function () {
       beforeEach(function () {
-        step.hasRepeatStepKeyword.and.returnValue(true);
+        step.hasRepeatStepKeyword.returns(true);
       });
 
       it("checks whether the preceding step is an event step", function () {
         step.isRepeatingEventStep();
-        expect(step.isPrecededByEventStep).toHaveBeenCalled();
+        expect(step.isPrecededByEventStep).to.have.been.called;
       });
 
       describe("when the step is preceded by an event step", function () {
         beforeEach(function () {
-          step.isPrecededByEventStep.and.returnValue(true);
+          step.isPrecededByEventStep.returns(true);
         });
 
         it("returns true", function () {
-          expect(step.isRepeatingEventStep()).toBe(true);
+          expect(step.isRepeatingEventStep()).to.equal(true);
         });
       });
 
       describe("when the step is not preceded by an event step", function () {
         beforeEach(function () {
-          step.isPrecededByEventStep.and.returnValue(false);
+          step.isPrecededByEventStep.returns(false);
         });
 
         it("returns false", function () {
-          expect(step.isRepeatingEventStep()).toBe(false);
+          expect(step.isRepeatingEventStep()).to.equal(false);
         });
       });
     });
 
     describe("when the keyword is not a repeating keyword", function () {
       beforeEach(function () {
-        step.hasRepeatStepKeyword.and.returnValue(false);
+        step.hasRepeatStepKeyword.returns(false);
       });
 
       it("does not check whether the preceding step is an event step", function () {
         step.isRepeatingEventStep();
-        expect(step.isPrecededByEventStep).not.toHaveBeenCalled();
+        expect(step.isPrecededByEventStep).not.to.have.been.called;
       });
 
       it("returns false", function () {
-        expect(step.isRepeatingEventStep()).toBe(false);
+        expect(step.isRepeatingEventStep()).to.equal(false);
       });
     });
   });
 
   describe("hasRepeatStepKeyword()", function () {
     it("returns true when the keyword is 'And '", function () {
-      feature.getStepKeywordByLines.and.returnValue('And ');
-      expect(step.hasRepeatStepKeyword()).toBeTruthy();
+      feature.getStepKeywordByLines.returns('And ');
+      expect(step.hasRepeatStepKeyword()).to.be.ok;
     });
 
     it("returns true when the keyword is 'But '", function () {
-      feature.getStepKeywordByLines.and.returnValue('But ');
-      expect(step.hasRepeatStepKeyword()).toBeTruthy();
+      feature.getStepKeywordByLines.returns('But ');
+      expect(step.hasRepeatStepKeyword()).to.be.ok;
     });
 
     it("returns true when the keyword is '* '", function () {
-      feature.getStepKeywordByLines.and.returnValue('* ');
-      expect(step.hasRepeatStepKeyword()).toBeTruthy();
+      feature.getStepKeywordByLines.returns('* ');
+      expect(step.hasRepeatStepKeyword()).to.be.ok;
     });
 
     it("returns false when the keyword is not 'And ' nor 'But '", function () {
-      expect(step.hasRepeatStepKeyword()).toBe(false);
+      expect(step.hasRepeatStepKeyword()).to.equal(false);
     });
   });
 
   describe("isPrecededByOutcomeStep()", function () {
     beforeEach(function () {
-      spyOn(step, 'hasPreviousStep');
+      sinon.stub(step, 'hasPreviousStep');
     });
 
     it("checks whether there is a previous step or not", function () {
       step.isPrecededByOutcomeStep();
-      expect(step.hasPreviousStep).toHaveBeenCalled();
+      expect(step.hasPreviousStep).to.have.been.called;
     });
 
     describe("when there are no previous steps", function () {
       beforeEach(function () {
-        step.hasPreviousStep.and.returnValue(false);
+        step.hasPreviousStep.returns(false);
       });
 
       it("is falsy", function () {
-        expect(step.isPrecededByOutcomeStep()).toBeFalsy();
+        expect(step.isPrecededByOutcomeStep()).not.to.be.ok;
       });
     });
 
@@ -322,38 +322,38 @@ describe("Cucumber.Ast.Step", function () {
       var previousStep;
 
       beforeEach(function () {
-        step.hasPreviousStep.and.returnValue(true);
-        previousStep = createSpyWithStubs("previous step", {isOutcomeStep: null});
-        spyOn(step, 'getPreviousStep').and.returnValue(previousStep);
+        step.hasPreviousStep.returns(true);
+        previousStep = createStubbedObject({isOutcomeStep: null});
+        sinon.stub(step, 'getPreviousStep').returns(previousStep);
       });
 
       it("gets the previous step", function () {
         step.isPrecededByOutcomeStep();
-        expect(step.getPreviousStep).toHaveBeenCalled();
+        expect(step.getPreviousStep).to.have.been.called;
       });
 
       it("checks whether the previous step is an outcome step or not", function () {
         step.isPrecededByOutcomeStep();
-        expect(previousStep.isOutcomeStep).toHaveBeenCalled();
+        expect(previousStep.isOutcomeStep).to.have.been.called;
       });
 
       describe("when the previous step is an outcome step", function () {
         beforeEach(function () {
-          previousStep.isOutcomeStep.and.returnValue(true);
+          previousStep.isOutcomeStep.returns(true);
         });
 
         it("is truthy", function () {
-          expect(step.isPrecededByOutcomeStep()).toBeTruthy();
+          expect(step.isPrecededByOutcomeStep()).to.be.ok;
         });
       });
 
       describe("when the previous step is not an outcome step", function () {
         beforeEach(function () {
-          previousStep.isOutcomeStep.and.returnValue(false);
+          previousStep.isOutcomeStep.returns(false);
         });
 
         it("is falsy", function () {
-          expect(step.isPrecededByOutcomeStep()).toBeFalsy();
+          expect(step.isPrecededByOutcomeStep()).not.to.be.ok;
         });
       });
     });
@@ -361,21 +361,21 @@ describe("Cucumber.Ast.Step", function () {
 
   describe("isPrecededByEventStep()", function () {
     beforeEach(function () {
-      spyOn(step, 'hasPreviousStep');
+      sinon.stub(step, 'hasPreviousStep');
     });
 
     it("checks whether there is a previous step or not", function () {
       step.isPrecededByEventStep();
-      expect(step.hasPreviousStep).toHaveBeenCalled();
+      expect(step.hasPreviousStep).to.have.been.called;
     });
 
     describe("when there are no previous steps", function () {
       beforeEach(function () {
-        step.hasPreviousStep.and.returnValue(false);
+        step.hasPreviousStep.returns(false);
       });
 
       it("is falsy", function () {
-        expect(step.isPrecededByEventStep()).toBeFalsy();
+        expect(step.isPrecededByEventStep()).not.to.be.ok;
       });
     });
 
@@ -383,38 +383,38 @@ describe("Cucumber.Ast.Step", function () {
       var previousStep;
 
       beforeEach(function () {
-        step.hasPreviousStep.and.returnValue(true);
-        previousStep = createSpyWithStubs("previous step", {isEventStep: null});
-        spyOn(step, 'getPreviousStep').and.returnValue(previousStep);
+        step.hasPreviousStep.returns(true);
+        previousStep = createStubbedObject({isEventStep: null});
+        sinon.stub(step, 'getPreviousStep').returns(previousStep);
       });
 
       it("gets the previous step", function () {
         step.isPrecededByEventStep();
-        expect(step.getPreviousStep).toHaveBeenCalled();
+        expect(step.getPreviousStep).to.have.been.called;
       });
 
       it("checks whether the previous step is an event step or not", function () {
         step.isPrecededByEventStep();
-        expect(previousStep.isEventStep).toHaveBeenCalled();
+        expect(previousStep.isEventStep).to.have.been.called;
       });
 
       describe("when the previous step is an event step", function () {
         beforeEach(function () {
-          previousStep.isEventStep.and.returnValue(true);
+          previousStep.isEventStep.returns(true);
         });
 
         it("is truthy", function () {
-          expect(step.isPrecededByEventStep()).toBeTruthy();
+          expect(step.isPrecededByEventStep()).to.be.ok;
         });
       });
 
       describe("when the previous step is not an event step", function () {
         beforeEach(function () {
-          previousStep.isEventStep.and.returnValue(false);
+          previousStep.isEventStep.returns(false);
         });
 
         it("is falsy", function () {
-          expect(step.isPrecededByEventStep()).toBeFalsy();
+          expect(step.isPrecededByEventStep()).not.to.be.ok;
         });
       });
     });

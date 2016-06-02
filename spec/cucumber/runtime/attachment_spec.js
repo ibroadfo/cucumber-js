@@ -1,4 +1,4 @@
-require('../../support/spec_helper');
+
 
 describe("Cucumber.Runtime.Attachment", function () {
   var Cucumber = requireLib('cucumber');
@@ -14,13 +14,13 @@ describe("Cucumber.Runtime.Attachment", function () {
 
   describe("getMimeType()", function () {
     it("returns the mime type", function () {
-      expect(attachment.getMimeType()).toBe(mimeType);
+      expect(attachment.getMimeType()).to.equal(mimeType);
     });
   });
 
   describe("getData()", function () {
     it("returns the data", function () {
-      expect(attachment.getData()).toBe(data);
+      expect(attachment.getData()).to.equal(data);
     });
   });
 });

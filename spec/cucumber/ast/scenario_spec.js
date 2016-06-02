@@ -1,5 +1,3 @@
-require('../../support/spec_helper');
-
 describe("Cucumber.Ast.Scenario", function () {
   var Cucumber = requireLib('cucumber');
   var scenario, step1, step2, tag1, tag2;
@@ -19,31 +17,40 @@ describe("Cucumber.Ast.Scenario", function () {
       ]
     };
 
-    step1 = createSpyWithStubs('step 1', {setPreviousStep: null, setScenario: null});
-    step2 = createSpyWithStubs('step 2', {setPreviousStep: null, setScenario: null});
-    spyOn(Cucumber.Ast, 'Step').and.returnValues(step1, step2);
+    step1 = createStubbedObject({setPreviousStep: null, setScenario: null});
+    step2 = createStubbedObject({setPreviousStep: null, setScenario: null});
+    sinon.stub(Cucumber.Ast, 'Step')
+      .onCall(0).returns(step1)
+      .onCall(1).returns(step2);
 
-    tag1 = createSpy('tag 1');
-    tag2 = createSpy('tag 2');
-    spyOn(Cucumber.Ast, 'Tag').and.returnValues(tag1, tag2);
+    tag1 = 'tag 1';
+    tag2 = 'tag 2';
+    sinon.stub(Cucumber.Ast, 'Tag')
+      .onCall(0).returns(tag1)
+      .onCall(1).returns(tag2);
 
     scenario = Cucumber.Ast.Scenario(scenarioData);
   });
 
+  afterEach(function() {
+    Cucumber.Ast.Step.restore();
+    Cucumber.Ast.Tag.restore();
+  });
+
   describe("constructor", function () {
     it('creates steps', function () {
-      expect(Cucumber.Ast.Step).toHaveBeenCalledWith({step1: 'data'});
-      expect(step1.setPreviousStep).toHaveBeenCalledWith(undefined);
-      expect(step1.setScenario).toHaveBeenCalledWith(scenario);
+      expect(Cucumber.Ast.Step).to.have.been.calledWith({step1: 'data'});
+      expect(step1.setPreviousStep).to.have.been.calledWith(undefined);
+      expect(step1.setScenario).to.have.been.calledWith(scenario);
 
-      expect(Cucumber.Ast.Step).toHaveBeenCalledWith({step2: 'data'});
-      expect(step2.setPreviousStep).toHaveBeenCalledWith(step1);
-      expect(step2.setScenario).toHaveBeenCalledWith(scenario);
+      expect(Cucumber.Ast.Step).to.have.been.calledWith({step2: 'data'});
+      expect(step2.setPreviousStep).to.have.been.calledWith(step1);
+      expect(step2.setScenario).to.have.been.calledWith(scenario);
     });
 
     it('creates tags', function () {
-      expect(Cucumber.Ast.Tag).toHaveBeenCalledWith({tag1: 'data'});
-      expect(Cucumber.Ast.Tag).toHaveBeenCalledWith({tag2: 'data'});
+      expect(Cucumber.Ast.Tag).to.have.been.calledWith({tag1: 'data'});
+      expect(Cucumber.Ast.Tag).to.have.been.calledWith({tag2: 'data'});
     });
   });
 
@@ -51,42 +58,42 @@ describe("Cucumber.Ast.Scenario", function () {
     var feature;
 
     beforeEach(function() {
-      feature = createSpyWithStubs('feature', {getScenarioKeyword: 'keyword'});
+      feature = createStubbedObject({getScenarioKeyword: 'keyword'});
       scenario.setFeature(feature);
     });
 
     it("returns the keyword of the scenario", function () {
-      expect(scenario.getKeyword()).toEqual('keyword');
+      expect(scenario.getKeyword()).to.eql('keyword');
     });
   });
 
   describe("getName()", function () {
     it("returns the name of the scenario", function () {
-      expect(scenario.getName()).toEqual('name');
+      expect(scenario.getName()).to.eql('name');
     });
   });
 
   describe("getDescription()", function () {
     it("returns the description of the scenario", function () {
-      expect(scenario.getDescription()).toEqual('description');
+      expect(scenario.getDescription()).to.eql('description');
     });
   });
 
   describe("getUri()", function () {
     it("returns the URI on which the background starts", function () {
-      expect(scenario.getUri()).toEqual('path');
+      expect(scenario.getUri()).to.eql('path');
     });
   });
 
   describe("getLine()", function () {
     it("returns the line on which the scenario starts", function () {
-      expect(scenario.getLine()).toEqual(1);
+      expect(scenario.getLine()).to.eql(1);
     });
   });
 
   describe("getTags()", function () {
     it("returns the tags", function () {
-      expect(scenario.getTags()).toEqual([tag1, tag2]);
+      expect(scenario.getTags()).to.eql([tag1, tag2]);
     });
   });
 });

@@ -23,13 +23,13 @@
   "jasmine": true,
   "globals": {
     "createSpy": true,
-    "spyOnStub": true,
+    "sinon.stubStub": true,
     "requireLib": true,
-    "createSpyWithStubs": true,
+    "createStubbedObject": true,
     "createSpyObj": true,
     "createEmittingSpy": true,
-    "spyOnModule": true,
-    "spyOnModuleAndReturn": true,
+    "sinon.stubModule": true,
+    "sinon.stubModuleAndReturn": true,
     "itBehavesLikeAllCucumberConfigurations": true
   }
 }

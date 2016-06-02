@@ -1,5 +1,5 @@
 /* jshint -W106 */
-require('../../support/spec_helper');
+
 
 describe("Cucumber.Listener.JsonFormatter", function () {
   var Cucumber = requireLib('cucumber');
@@ -7,8 +7,8 @@ describe("Cucumber.Listener.JsonFormatter", function () {
 
   beforeEach(function () {
     options = {};
-    var formatter = createSpyWithStubs("formatter", {finish: null, log: null});
-    spyOn(Cucumber.Listener, 'Formatter').and.returnValue(formatter);
+    var formatter = createStubbedObject({finish: null, log: null});
+    sinon.stub(Cucumber.Listener, 'Formatter').returns(formatter);
     jsonFormatter = Cucumber.Listener.JsonFormatter(options);
   });
 
@@ -21,7 +21,7 @@ describe("Cucumber.Listener.JsonFormatter", function () {
 
     it("calls finish with the callback", function () {
       jsonFormatter.handleAfterFeaturesEvent({}, callback);
-      expect(jsonFormatter.finish).toHaveBeenCalledWith(callback);
+      expect(jsonFormatter.finish).to.have.been.calledWith(callback);
     });
   });
 
@@ -29,9 +29,9 @@ describe("Cucumber.Listener.JsonFormatter", function () {
     var callback, event;
 
     beforeEach(function () {
-      var tag1 = createSpyWithStubs('tag1', {getName: 'tag 1', getLine: 1});
-      var tag2 = createSpyWithStubs('tag2', {getName: 'tag 2', getLine: 1});
-      var feature = createSpyWithStubs("feature", {
+      var tag1 = createStubbedObject('tag1', {getName: 'tag 1', getLine: 1});
+      var tag2 = createStubbedObject('tag2', {getName: 'tag 2', getLine: 1});
+      var feature = createStubbedObject({
         getKeyword: 'Feature',
         getName: 'A Feature Name',
         getDescription: 'A Feature Description',
@@ -39,13 +39,13 @@ describe("Cucumber.Listener.JsonFormatter", function () {
         getUri: 'uri',
         getTags: [tag1, tag2]
       });
-      var event = createSpyWithStubs("event", {getPayloadItem: feature});
+      var event = createStubbedObject({getPayloadItem: feature});
       callback = createSpy("callback");
       jsonFormatter.handleBeforeFeatureEvent(event, callback);
     });
 
     it("calls back", function () {
-      expect(callback).toHaveBeenCalled();
+      expect(callback).to.have.been.called;
     });
 
     describe("with no scenarios", function () {
@@ -54,10 +54,10 @@ describe("Cucumber.Listener.JsonFormatter", function () {
       });
 
       it("outputs the feature", function () {
-        expect(jsonFormatter.log).toHaveBeenCalled();
+        expect(jsonFormatter.log).to.have.been.called;
         var json = jsonFormatter.log.calls.mostRecent().args[0];
         var features = JSON.parse(json);
-        expect(features).toEqual([{
+        expect(features).to.eql([{
           description: 'A Feature Description',
           elements: [],
           id: 'a-feature-name',
@@ -75,22 +75,22 @@ describe("Cucumber.Listener.JsonFormatter", function () {
 
     describe("with a scenario", function () {
       beforeEach(function () {
-        var tag1 = createSpyWithStubs('tag1', {getName: 'tag 1', getLine: 3});
-        var tag2 = createSpyWithStubs('tag2', {getName: 'tag 2', getLine: 3});
-        var scenario = createSpyWithStubs("scenario", {
+        var tag1 = createStubbedObject('tag1', {getName: 'tag 1', getLine: 3});
+        var tag2 = createStubbedObject('tag2', {getName: 'tag 2', getLine: 3});
+        var scenario = createStubbedObject({
           getKeyword: 'Scenario',
           getName: 'A Scenario Name',
           getDescription: 'A Scenario Description',
           getLine: 4,
           getTags: [tag1, tag2]
         });
-        event = createSpyWithStubs("event", {getPayloadItem: scenario});
+        event = createStubbedObject({getPayloadItem: scenario});
         callback = createSpy("callback");
         jsonFormatter.handleBeforeScenarioEvent(event, callback);
       });
 
       it("calls back", function () {
-        expect(callback).toHaveBeenCalled();
+        expect(callback).to.have.been.called;
       });
 
       describe("with no steps", function () {
@@ -99,10 +99,10 @@ describe("Cucumber.Listener.JsonFormatter", function () {
         });
 
         it("outputs the feature and the scenario", function () {
-          expect(jsonFormatter.log).toHaveBeenCalled();
+          expect(jsonFormatter.log).to.have.been.called;
           var json = jsonFormatter.log.calls.mostRecent().args[0];
           var features = JSON.parse(json);
-          expect(features[0].elements).toEqual([{
+          expect(features[0].elements).to.eql([{
             description: 'A Scenario Description',
             id: 'a-feature-name;a-scenario-name',
             keyword: 'Scenario',
@@ -122,7 +122,7 @@ describe("Cucumber.Listener.JsonFormatter", function () {
         var step, stepResult;
 
         beforeEach(function() {
-          step = createSpyWithStubs("step", {
+          step = createStubbedObject({
             getArguments: [],
             getLine: 1,
             getKeyword: 'Step',
@@ -130,7 +130,7 @@ describe("Cucumber.Listener.JsonFormatter", function () {
             isHidden: false
           });
 
-          stepResult = createSpyWithStubs("stepResult", {
+          stepResult = createStubbedObject({
             getDuration: 1,
             getFailureException: null,
             getStatus: Cucumber.Status.PASSED,
@@ -140,7 +140,7 @@ describe("Cucumber.Listener.JsonFormatter", function () {
             getAttachments: []
           });
 
-          event = createSpyWithStubs("event", {getPayloadItem: stepResult});
+          event = createStubbedObject({getPayloadItem: stepResult});
           callback = createSpy("callback");
         });
 
@@ -151,14 +151,14 @@ describe("Cucumber.Listener.JsonFormatter", function () {
           });
 
           it("calls back", function () {
-            expect(callback).toHaveBeenCalled();
+            expect(callback).to.have.been.called;
           });
 
           it("outputs the step with a hidden attribute", function () {
-            expect(jsonFormatter.log).toHaveBeenCalled();
+            expect(jsonFormatter.log).to.have.been.called;
             var json = jsonFormatter.log.calls.mostRecent().args[0];
             var features = JSON.parse(json);
-            expect(features[0].elements[0].steps).toEqual([{
+            expect(features[0].elements[0].steps).to.eql([{
               arguments: [],
               line: 1,
               keyword: 'Step',
@@ -173,21 +173,21 @@ describe("Cucumber.Listener.JsonFormatter", function () {
 
         describe("that is failing", function () {
           beforeEach(function() {
-            stepResult.getStatus.and.returnValue(Cucumber.Status.FAILED);
-            stepResult.getFailureException.and.returnValue({stack: 'failure stack'});
+            stepResult.getStatus.returns(Cucumber.Status.FAILED);
+            stepResult.getFailureException.returns({stack: 'failure stack'});
             jsonFormatter.handleStepResultEvent(event, callback);
             jsonFormatter.handleAfterFeaturesEvent({}, function() {});
           });
 
           it("calls back", function () {
-            expect(callback).toHaveBeenCalled();
+            expect(callback).to.have.been.called;
           });
 
           it("outputs the step with a hidden attribute", function () {
-            expect(jsonFormatter.log).toHaveBeenCalled();
+            expect(jsonFormatter.log).to.have.been.called;
             var json = jsonFormatter.log.calls.mostRecent().args[0];
             var features = JSON.parse(json);
-            expect(features[0].elements[0].steps[0].result).toEqual({
+            expect(features[0].elements[0].steps[0].result).to.eql({
               status: 'failed',
               error_message: 'failure stack',
               duration: 1
@@ -197,46 +197,46 @@ describe("Cucumber.Listener.JsonFormatter", function () {
 
         describe("that is hidden", function () {
           beforeEach(function() {
-            step.isHidden.and.returnValue(true);
+            step.isHidden.returns(true);
             jsonFormatter.handleStepResultEvent(event, callback);
             jsonFormatter.handleAfterFeaturesEvent({}, function() {});
           });
 
           it("calls back", function () {
-            expect(callback).toHaveBeenCalled();
+            expect(callback).to.have.been.called;
           });
 
           it("does not output a line attribute and outputs a hidden attribute", function () {
-            expect(jsonFormatter.log).toHaveBeenCalled();
+            expect(jsonFormatter.log).to.have.been.called;
             var json = jsonFormatter.log.calls.mostRecent().args[0];
             var features = JSON.parse(json);
-            expect(features[0].elements[0].steps[0].hasOwnProperty('line')).toEqual(false);
-            expect(features[0].elements[0].steps[0].hidden).toEqual(true);
+            expect(features[0].elements[0].steps[0].hasOwnProperty('line')).to.eql(false);
+            expect(features[0].elements[0].steps[0].hidden).to.eql(true);
           });
         });
 
         describe("with a doc string", function () {
           beforeEach(function (){
-            var docString = createSpyWithStubs("docString", {
+            var docString = createStubbedObject({
               getContent: "This is a DocString",
               getLine: 2,
               getContentType: null,
               getType: 'DocString'
             });
-            step.getArguments.and.returnValue([docString]);
+            step.getArguments.returns([docString]);
             jsonFormatter.handleStepResultEvent(event, callback);
             jsonFormatter.handleAfterFeaturesEvent({}, function() {});
           });
 
           it("calls back", function () {
-            expect(callback).toHaveBeenCalled();
+            expect(callback).to.have.been.called;
           });
 
           it("outputs the step with a hidden attribute", function () {
-            expect(jsonFormatter.log).toHaveBeenCalled();
+            expect(jsonFormatter.log).to.have.been.called;
             var json = jsonFormatter.log.calls.mostRecent().args[0];
             var features = JSON.parse(json);
-            expect(features[0].elements[0].steps[0].arguments).toEqual([{
+            expect(features[0].elements[0].steps[0].arguments).to.eql([{
               line: 2,
               content: 'This is a DocString',
               contentType: null
@@ -246,7 +246,7 @@ describe("Cucumber.Listener.JsonFormatter", function () {
 
         describe("with a data table", function () {
           beforeEach(function (){
-            var dataTable = createSpyWithStubs("dataTable", {
+            var dataTable = createStubbedObject({
               getType: 'DataTable',
               raw: [
                 ['a:1', 'a:2', 'a:3'],
@@ -254,20 +254,20 @@ describe("Cucumber.Listener.JsonFormatter", function () {
                 ['c:1', 'c:2', 'c:3']
               ]
             });
-            step.getArguments.and.returnValue([dataTable]);
+            step.getArguments.returns([dataTable]);
             jsonFormatter.handleStepResultEvent(event, callback);
             jsonFormatter.handleAfterFeaturesEvent({}, function() {});
           });
 
           it("calls back", function () {
-            expect(callback).toHaveBeenCalled();
+            expect(callback).to.have.been.called;
           });
 
           it("outputs the step with a hidden attribute", function () {
-            expect(jsonFormatter.log).toHaveBeenCalled();
+            expect(jsonFormatter.log).to.have.been.called;
             var json = jsonFormatter.log.calls.mostRecent().args[0];
             var features = JSON.parse(json);
-            expect(features[0].elements[0].steps[0].arguments).toEqual([{
+            expect(features[0].elements[0].steps[0].arguments).to.eql([{
               rows: [
                 {cells: ['a:1', 'a:2', 'a:3'] },
                 {cells: ['b:1', 'b:2', 'b:3'] },
@@ -279,24 +279,24 @@ describe("Cucumber.Listener.JsonFormatter", function () {
 
         describe("with attachments", function () {
           beforeEach(function (){
-            var attachment1 = createSpyWithStubs("first attachment", {getMimeType: "first mime type", getData: "first data"});
-            var attachment2 = createSpyWithStubs("second attachment", {getMimeType: "second mime type", getData: "second data"});
+            var attachment1 = createStubbedObject({getMimeType: "first mime type", getData: "first data"});
+            var attachment2 = createStubbedObject({getMimeType: "second mime type", getData: "second data"});
             var attachments = [attachment1, attachment2];
-            stepResult.hasAttachments.and.returnValue(true);
-            stepResult.getAttachments.and.returnValue(attachments);
+            stepResult.hasAttachments.returns(true);
+            stepResult.getAttachments.returns(attachments);
             jsonFormatter.handleStepResultEvent(event, callback);
             jsonFormatter.handleAfterFeaturesEvent({}, function() {});
           });
 
           it("calls back", function () {
-            expect(callback).toHaveBeenCalled();
+            expect(callback).to.have.been.called;
           });
 
           it("outputs the step with a hidden attribute", function () {
-            expect(jsonFormatter.log).toHaveBeenCalled();
+            expect(jsonFormatter.log).to.have.been.called;
             var json = jsonFormatter.log.calls.mostRecent().args[0];
             var features = JSON.parse(json);
-            expect(features[0].elements[0].steps[0].embeddings).toEqual([
+            expect(features[0].elements[0].steps[0].embeddings).to.eql([
               {data: 'Zmlyc3QgZGF0YQ==', mime_type: 'first mime type'},
               {data: 'c2Vjb25kIGRhdGE=', mime_type: 'second mime type'}
             ]);
@@ -305,24 +305,24 @@ describe("Cucumber.Listener.JsonFormatter", function () {
 
         describe("with a step definition", function () {
           beforeEach(function (){
-            var stepDefinition = createSpyWithStubs('step definition', {
+            var stepDefinition = createStubbedObject('step definition', {
               getLine: 2,
               getUri: 'path/to/stepDef'
             });
-            stepResult.getStepDefinition.and.returnValue(stepDefinition);
+            stepResult.getStepDefinition.returns(stepDefinition);
             jsonFormatter.handleStepResultEvent(event, callback);
             jsonFormatter.handleAfterFeaturesEvent({}, function() {});
           });
 
           it("calls back", function () {
-            expect(callback).toHaveBeenCalled();
+            expect(callback).to.have.been.called;
           });
 
           it("outputs the step with a match attribute", function () {
-            expect(jsonFormatter.log).toHaveBeenCalled();
+            expect(jsonFormatter.log).to.have.been.called;
             var json = jsonFormatter.log.calls.mostRecent().args[0];
             var features = JSON.parse(json);
-            expect(features[0].elements[0].steps[0].match).toEqual({
+            expect(features[0].elements[0].steps[0].match).to.eql({
               location: 'path/to/stepDef:2'
             });
           });

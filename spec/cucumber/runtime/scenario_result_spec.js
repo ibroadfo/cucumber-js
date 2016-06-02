@@ -1,4 +1,4 @@
-require('../../support/spec_helper');
+
 
 describe("Cucumber.Runtime.ScenarioResult", function () {
   var Cucumber = requireLib('cucumber');
@@ -10,7 +10,7 @@ describe("Cucumber.Runtime.ScenarioResult", function () {
   });
 
   it('has a status of passed', function() {
-    expect(scenarioResult.getStatus()).toEqual(Cucumber.Status.PASSED);
+    expect(scenarioResult.getStatus()).to.eql(Cucumber.Status.PASSED);
   });
 
   describe('after a passing step', function () {
@@ -20,7 +20,7 @@ describe("Cucumber.Runtime.ScenarioResult", function () {
     });
 
     it('has a status of passed', function() {
-      expect(scenarioResult.getStatus()).toEqual(Cucumber.Status.PASSED);
+      expect(scenarioResult.getStatus()).to.eql(Cucumber.Status.PASSED);
     });
 
     describe('after a failing step', function () {
@@ -33,11 +33,11 @@ describe("Cucumber.Runtime.ScenarioResult", function () {
       });
 
       it('has a status of failed', function() {
-        expect(scenarioResult.getStatus()).toEqual(Cucumber.Status.FAILED);
+        expect(scenarioResult.getStatus()).to.eql(Cucumber.Status.FAILED);
       });
 
       it('has a failure exception', function() {
-        expect(scenarioResult.getFailureException()).toBe(failureException);
+        expect(scenarioResult.getFailureException()).to.equal(failureException);
       });
     });
 
@@ -48,7 +48,7 @@ describe("Cucumber.Runtime.ScenarioResult", function () {
       });
 
       it('has a status of pending', function() {
-        expect(scenarioResult.getStatus()).toEqual(Cucumber.Status.PENDING);
+        expect(scenarioResult.getStatus()).to.eql(Cucumber.Status.PENDING);
       });
     });
 
@@ -59,7 +59,7 @@ describe("Cucumber.Runtime.ScenarioResult", function () {
       });
 
       it('has a status of undefined', function() {
-        expect(scenarioResult.getStatus()).toEqual(Cucumber.Status.UNDEFINED);
+        expect(scenarioResult.getStatus()).to.eql(Cucumber.Status.UNDEFINED);
       });
     });
   });
@@ -74,11 +74,11 @@ describe("Cucumber.Runtime.ScenarioResult", function () {
     });
 
     it('has a status of failed', function() {
-      expect(scenarioResult.getStatus()).toEqual(Cucumber.Status.FAILED);
+      expect(scenarioResult.getStatus()).to.eql(Cucumber.Status.FAILED);
     });
 
     it('has a failure exception', function() {
-      expect(scenarioResult.getFailureException()).toBe(failureException);
+      expect(scenarioResult.getFailureException()).to.equal(failureException);
     });
 
     describe('after a pending step', function () {
@@ -88,11 +88,11 @@ describe("Cucumber.Runtime.ScenarioResult", function () {
       });
 
       it('has a status of failed', function() {
-        expect(scenarioResult.getStatus()).toEqual(Cucumber.Status.FAILED);
+        expect(scenarioResult.getStatus()).to.eql(Cucumber.Status.FAILED);
       });
 
       it('has a failure exception', function() {
-        expect(scenarioResult.getFailureException()).toBe(failureException);
+        expect(scenarioResult.getFailureException()).to.equal(failureException);
       });
     });
 
@@ -103,11 +103,11 @@ describe("Cucumber.Runtime.ScenarioResult", function () {
       });
 
       it('has a status of failed', function() {
-        expect(scenarioResult.getStatus()).toEqual(Cucumber.Status.FAILED);
+        expect(scenarioResult.getStatus()).to.eql(Cucumber.Status.FAILED);
       });
 
       it('has a failure exception', function() {
-        expect(scenarioResult.getFailureException()).toBe(failureException);
+        expect(scenarioResult.getFailureException()).to.equal(failureException);
       });
     });
 
@@ -118,11 +118,11 @@ describe("Cucumber.Runtime.ScenarioResult", function () {
       });
 
       it('has a status of failed', function() {
-        expect(scenarioResult.getStatus()).toEqual(Cucumber.Status.FAILED);
+        expect(scenarioResult.getStatus()).to.eql(Cucumber.Status.FAILED);
       });
 
       it('has a failure exception', function() {
-        expect(scenarioResult.getFailureException()).toBe(failureException);
+        expect(scenarioResult.getFailureException()).to.equal(failureException);
       });
     });
   });
@@ -134,7 +134,7 @@ describe("Cucumber.Runtime.ScenarioResult", function () {
     });
 
     it('has a status of pending', function() {
-      expect(scenarioResult.getStatus()).toEqual(Cucumber.Status.PENDING);
+      expect(scenarioResult.getStatus()).to.eql(Cucumber.Status.PENDING);
     });
 
     describe('after a undefined step', function () {
@@ -144,7 +144,7 @@ describe("Cucumber.Runtime.ScenarioResult", function () {
       });
 
       it('has a status of pending', function() {
-        expect(scenarioResult.getStatus()).toEqual(Cucumber.Status.PENDING);
+        expect(scenarioResult.getStatus()).to.eql(Cucumber.Status.PENDING);
       });
     });
 
@@ -155,7 +155,7 @@ describe("Cucumber.Runtime.ScenarioResult", function () {
       });
 
       it('has a status of pending', function() {
-        expect(scenarioResult.getStatus()).toEqual(Cucumber.Status.PENDING);
+        expect(scenarioResult.getStatus()).to.eql(Cucumber.Status.PENDING);
       });
     });
   });
@@ -167,7 +167,7 @@ describe("Cucumber.Runtime.ScenarioResult", function () {
     });
 
     it('has a status of undefined', function() {
-      expect(scenarioResult.getStatus()).toEqual(Cucumber.Status.UNDEFINED);
+      expect(scenarioResult.getStatus()).to.eql(Cucumber.Status.UNDEFINED);
     });
 
     describe('after a pending step', function () {
@@ -177,7 +177,7 @@ describe("Cucumber.Runtime.ScenarioResult", function () {
       });
 
       it('has a status of undefined', function() {
-        expect(scenarioResult.getStatus()).toEqual(Cucumber.Status.UNDEFINED);
+        expect(scenarioResult.getStatus()).to.eql(Cucumber.Status.UNDEFINED);
       });
     });
 
@@ -188,7 +188,7 @@ describe("Cucumber.Runtime.ScenarioResult", function () {
       });
 
       it('has a status of undefined', function() {
-        expect(scenarioResult.getStatus()).toEqual(Cucumber.Status.UNDEFINED);
+        expect(scenarioResult.getStatus()).to.eql(Cucumber.Status.UNDEFINED);
       });
     });
   });
@@ -200,7 +200,7 @@ describe("Cucumber.Runtime.ScenarioResult", function () {
     });
 
     it('has a status of skipped', function() {
-      expect(scenarioResult.getStatus()).toEqual(Cucumber.Status.SKIPPED);
+      expect(scenarioResult.getStatus()).to.eql(Cucumber.Status.SKIPPED);
     });
 
     describe('after a pending step', function () {
@@ -210,7 +210,7 @@ describe("Cucumber.Runtime.ScenarioResult", function () {
       });
 
       it('has a status of skipped', function() {
-        expect(scenarioResult.getStatus()).toEqual(Cucumber.Status.SKIPPED);
+        expect(scenarioResult.getStatus()).to.eql(Cucumber.Status.SKIPPED);
       });
     });
 
@@ -221,7 +221,7 @@ describe("Cucumber.Runtime.ScenarioResult", function () {
       });
 
       it('has a status of skipped', function() {
-        expect(scenarioResult.getStatus()).toEqual(Cucumber.Status.SKIPPED);
+        expect(scenarioResult.getStatus()).to.eql(Cucumber.Status.SKIPPED);
       });
     });
   });

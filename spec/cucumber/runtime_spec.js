@@ -10,14 +10,14 @@ describe("Cucumber.Runtime", function () {
     isStrictRequested = false;
     isDryRunRequested = false;
     isFailFastRequested = false;
-    configuration = createSpyWithStubs("configuration", {
+    configuration = createStubbedObject({
       isDryRunRequested: isDryRunRequested,
       isFailFastRequested: isFailFastRequested,
       isStrictRequested: isStrictRequested,
       shouldFilterStackTraces: true
     });
-    spyOn(Cucumber.Runtime.StackTraceFilter, 'filter');
-    spyOn(Cucumber.Runtime.StackTraceFilter, 'unfilter');
+    sinon.stub(Cucumber.Runtime.StackTraceFilter, 'filter');
+    sinon.stub(Cucumber.Runtime.StackTraceFilter, 'unfilter');
     runtime       = Cucumber.Runtime(configuration);
   });
 
@@ -27,11 +27,11 @@ describe("Cucumber.Runtime", function () {
     beforeEach(function () {
       features           = createSpy("features (AST)");
       supportCodeLibrary = createSpy("support code library");
-      featuresRunner      = createSpyWithStubs("features runner", {run: null});
+      featuresRunner      = createStubbedObject({run: null});
       callback           = createSpy("callback");
-      spyOn(runtime, 'getFeatures').and.returnValue(features);
-      spyOn(runtime, 'getSupportCodeLibrary').and.returnValue(supportCodeLibrary);
-      spyOn(Cucumber.Runtime, 'FeaturesRunner').and.returnValue(featuresRunner);
+      sinon.stub(runtime, 'getFeatures').returns(features);
+      sinon.stub(runtime, 'getSupportCodeLibrary').returns(supportCodeLibrary);
+      sinon.stub(Cucumber.Runtime, 'FeaturesRunner').returns(featuresRunner);
     });
 
     it("fails when no callback is passed", function () {
@@ -48,12 +48,12 @@ describe("Cucumber.Runtime", function () {
 
     it("gets the features", function () {
       runtime.start(callback);
-      expect(runtime.getFeatures).toHaveBeenCalled();
+      expect(runtime.getFeatures).to.have.been.called;
     });
 
     it("gets the support code library", function () {
       runtime.start(callback);
-      expect(runtime.getSupportCodeLibrary).toHaveBeenCalled();
+      expect(runtime.getSupportCodeLibrary).to.have.been.called;
     });
 
     it("creates a new features runner", function () {
@@ -63,7 +63,7 @@ describe("Cucumber.Runtime", function () {
         failFast: isFailFastRequested,
         strict: isStrictRequested
       };
-      expect(Cucumber.Runtime.FeaturesRunner).toHaveBeenCalledWith(features, supportCodeLibrary, [], options);
+      expect(Cucumber.Runtime.FeaturesRunner).to.have.been.calledWith(features, supportCodeLibrary, [], options);
     });
 
     describe("when listeners are attached", function () {
@@ -81,29 +81,29 @@ describe("Cucumber.Runtime", function () {
           failFast: isFailFastRequested,
           strict: isStrictRequested
         };
-        expect(Cucumber.Runtime.FeaturesRunner).toHaveBeenCalledWith(features, supportCodeLibrary, [listener], options);
+        expect(Cucumber.Runtime.FeaturesRunner).to.have.been.calledWith(features, supportCodeLibrary, [listener], options);
       });
     });
 
     describe("when stack traces should be filtered", function () {
       beforeEach(function () {
-        configuration.shouldFilterStackTraces.and.returnValue(true);
+        configuration.shouldFilterStackTraces.returns(true);
       });
 
       it("activates the stack trace filter", function () {
         runtime.start(callback);
-        expect(Cucumber.Runtime.StackTraceFilter.filter).toHaveBeenCalled();
+        expect(Cucumber.Runtime.StackTraceFilter.filter).to.have.been.called;
       });
     });
 
     describe("when stack traces should be unfiltered", function () {
       beforeEach(function () {
-        configuration.shouldFilterStackTraces.and.returnValue(false);
+        configuration.shouldFilterStackTraces.returns(false);
       });
 
       it("does not activate the stack trace filter", function () {
         runtime.start(callback);
-        expect(Cucumber.Runtime.StackTraceFilter.filter).not.toHaveBeenCalled();
+        expect(Cucumber.Runtime.StackTraceFilter.filter).not.to.have.been.called;
       });
     });
 
@@ -123,12 +123,12 @@ describe("Cucumber.Runtime", function () {
 
       it("deactivates the stack trace filter", function () {
         walkCallback(walkResults);
-        expect(Cucumber.Runtime.StackTraceFilter.unfilter).toHaveBeenCalled();
+        expect(Cucumber.Runtime.StackTraceFilter.unfilter).to.have.been.called;
       });
 
       it("calls back", function () {
         walkCallback(walkResults);
-        expect(callback).toHaveBeenCalledWith(walkResults);
+        expect(callback).to.have.been.calledWith(walkResults);
       });
     });
   });
@@ -140,34 +140,34 @@ describe("Cucumber.Runtime", function () {
       featureSources = createSpy("feature sources");
       astFilter      = createSpy("AST filter");
       features       = createSpy("features (AST)");
-      parser         = createSpyWithStubs("parser", {parse: features});
-      spyOnStub(configuration, 'getFeatureSources').and.returnValue(featureSources);
-      spyOnStub(configuration, 'getAstFilter').and.returnValue(astFilter);
-      spyOn(Cucumber, 'Parser').and.returnValue(parser);
+      parser         = createStubbedObject({parse: features});
+      sinon.stubStub(configuration, 'getFeatureSources').returns(featureSources);
+      sinon.stubStub(configuration, 'getAstFilter').returns(astFilter);
+      sinon.stub(Cucumber, 'Parser').returns(parser);
     });
 
     it("gets the feature sources from the configuration", function () {
       runtime.getFeatures();
-      expect(configuration.getFeatureSources).toHaveBeenCalled();
+      expect(configuration.getFeatureSources).to.have.been.called;
     });
 
     it("gets the AST filter from the configuration", function () {
       runtime.getFeatures();
-      expect(configuration.getAstFilter).toHaveBeenCalled();
+      expect(configuration.getAstFilter).to.have.been.called;
     });
 
     it("creates a new Cucumber parser for the feature sources", function () {
       runtime.getFeatures();
-      expect(Cucumber.Parser).toHaveBeenCalledWith(featureSources, astFilter);
+      expect(Cucumber.Parser).to.have.been.calledWith(featureSources, astFilter);
     });
 
     it("tells the parser to parse the features", function () {
       runtime.getFeatures();
-      expect(parser.parse).toHaveBeenCalled();
+      expect(parser.parse).to.have.been.called;
     });
 
     it("returns the parsed features", function () {
-      expect(runtime.getFeatures()).toBe(features);
+      expect(runtime.getFeatures()).to.equal(features);
     });
   });
 
@@ -176,16 +176,16 @@ describe("Cucumber.Runtime", function () {
 
     beforeEach(function () {
       supportCodeLibrary = createSpy("support code library");
-      spyOnStub(configuration, 'getSupportCodeLibrary').and.returnValue(supportCodeLibrary);
+      sinon.stubStub(configuration, 'getSupportCodeLibrary').returns(supportCodeLibrary);
     });
 
     it("gets the support code library from the configuration", function () {
       runtime.getSupportCodeLibrary();
-      expect(configuration.getSupportCodeLibrary).toHaveBeenCalled();
+      expect(configuration.getSupportCodeLibrary).to.have.been.called;
     });
 
     it("returns the support code library", function () {
-      expect(runtime.getSupportCodeLibrary()).toBe(supportCodeLibrary);
+      expect(runtime.getSupportCodeLibrary()).to.equal(supportCodeLibrary);
     });
   });
 });

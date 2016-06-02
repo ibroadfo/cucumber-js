@@ -1,16 +1,16 @@
-spyOnStub = function (obj, methodName) {
+sinon.stubStub = function (obj, methodName) {
   obj[methodName] = function () {};
-  return spyOn(obj, methodName);
+  return sinon.stub(obj, methodName);
 };
 
 createSpy = jasmine.createSpy;
 createSpyObj = jasmine.createSpyObj;
 
-createSpyWithStubs = function (name, stubs) {
+createStubbedObject = function (name, stubs) {
   var spy = createSpy(name);
   for (var stubMethod in stubs) {
     spy[stubMethod] = function () {};
-    spyOn(spy, stubMethod).and.returnValue(stubs[stubMethod]);
+    sinon.stub(spy, stubMethod).returns(stubs[stubMethod]);
   }
   return (spy);
 };
@@ -29,7 +29,7 @@ createEmittingSpy = function (name) {
       });
     }
   };
-  spyOn(spy, 'on').and.callFake(function (event, callback) {
+  sinon.stub(spy, 'on').and.callFake(function (event, callback) {
     if (spy.callbacks[event] === undefined) {
       spy.callbacks[event] = [];
     }
@@ -41,13 +41,13 @@ createEmittingSpy = function (name) {
 var moduleSpies = {};
 var originalJsLoader = require.extensions['.js'];
 
-spyOnModule = function spyOnModule(module) {
+sinon.stubModule = function sinon.stubModule(module) {
   var spy           = createSpy("spy on module \"" + module + "\"");
   spy.requireCount  = 0;
-  return spyOnModuleAndReturn(module, spy);
+  return sinon.stubModuleAndReturn(module, spy);
 };
 
-spyOnModuleAndReturn = function spyOnModuleAndReturn(module, spy) {
+sinon.stubModuleAndReturn = function sinon.stubModuleAndReturn(module, spy) {
   var path          = require.resolve(module);
   moduleSpies[path] = spy;
   delete require.cache[path];

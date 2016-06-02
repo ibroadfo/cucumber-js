@@ -1,4 +1,4 @@
-require('../../support/spec_helper');
+
 
 describe("Cucumber.Cli.ArgumentParser.PathExpander", function () {
   var PathExpander = requireLib('cucumber').Cli.PathExpander;
@@ -10,18 +10,18 @@ describe("Cucumber.Cli.ArgumentParser.PathExpander", function () {
       extensions      = createSpy("extensions");
       unexpandedPaths = [createSpy("unexpanded path 1"), createSpy("unexpanded path 2")];
       expandedPaths   = [createSpy("expanded path 1-1"), createSpy("expanded path 1-2"), createSpy("expanded path 2-1")];
-      spyOn(PathExpander, 'expandPathWithExtensions').and.returnValues([expandedPaths[0], expandedPaths[1]], [expandedPaths[1], expandedPaths[2]]);
+      sinon.stub(PathExpander, 'expandPathWithExtensions').and.returnValues([expandedPaths[0], expandedPaths[1]], [expandedPaths[1], expandedPaths[2]]);
     });
 
     it("expands each path", function () {
       PathExpander.expandPathsWithExtensions(unexpandedPaths, extensions);
       unexpandedPaths.forEach(function (unexpandedPath) {
-        expect(PathExpander.expandPathWithExtensions).toHaveBeenCalledWith(unexpandedPath, extensions);
+        expect(PathExpander.expandPathWithExtensions).to.have.been.calledWith(unexpandedPath, extensions);
       });
     });
 
     it("returns the expanded paths without duplicates", function () {
-      expect(PathExpander.expandPathsWithExtensions(unexpandedPaths)).toEqual(expandedPaths);
+      expect(PathExpander.expandPathsWithExtensions(unexpandedPaths)).to.eql(expandedPaths);
     });
   });
 
@@ -32,51 +32,51 @@ describe("Cucumber.Cli.ArgumentParser.PathExpander", function () {
     beforeEach(function () {
       path       = "relative/path";
       extensions = createSpy("extensions");
-      stats      = createSpyWithStubs("path stats", {isDirectory: null});
-      spyOn(fs, 'statSync').and.returnValue(stats);
+      stats      = createStubbedObject({isDirectory: null});
+      sinon.stub(fs, 'statSync').returns(stats);
       realPath   = "/real/path";
-      spyOn(fs, 'realpathSync').and.returnValue(realPath);
+      sinon.stub(fs, 'realpathSync').returns(realPath);
       pathsFromExpandedDirectory = createSpy("paths from expanded directory");
-      spyOn(PathExpander, 'expandDirectoryWithExtensions').and.returnValue(pathsFromExpandedDirectory);
+      sinon.stub(PathExpander, 'expandDirectoryWithExtensions').returns(pathsFromExpandedDirectory);
     });
 
     it("synchronously gets the absolute representation of the path after", function () {
       PathExpander.expandPathWithExtensions(path, extensions);
-      expect(fs.realpathSync).toHaveBeenCalledWith('relative/path');
+      expect(fs.realpathSync).to.have.been.calledWith('relative/path');
     });
 
     it("synchronously stats the path", function () {
       PathExpander.expandPathWithExtensions(path, extensions);
-      expect(fs.statSync).toHaveBeenCalledWith(realPath);
+      expect(fs.statSync).to.have.been.calledWith(realPath);
     });
 
     it("checks whether the path points to a directory or not", function () {
       PathExpander.expandPathWithExtensions(path, extensions);
-      expect(stats.isDirectory).toHaveBeenCalled();
+      expect(stats.isDirectory).to.have.been.called;
     });
 
     describe("when the path points to a directory", function () {
       beforeEach(function () {
-        stats.isDirectory.and.returnValue(true);
+        stats.isDirectory.returns(true);
       });
 
       it("expands the directory", function () {
         PathExpander.expandPathWithExtensions(path, extensions);
-        expect(PathExpander.expandDirectoryWithExtensions).toHaveBeenCalledWith(realPath, extensions);
+        expect(PathExpander.expandDirectoryWithExtensions).to.have.been.calledWith(realPath, extensions);
       });
 
       it("returns the paths expanded from the directory", function () {
-        expect(PathExpander.expandPathWithExtensions(path, extensions)).toBe(pathsFromExpandedDirectory);
+        expect(PathExpander.expandPathWithExtensions(path, extensions)).to.equal(pathsFromExpandedDirectory);
       });
     });
 
     describe("when the path does not point to a directory", function () {
       beforeEach(function () {
-        stats.isDirectory.and.returnValue(false);
+        stats.isDirectory.returns(false);
       });
 
       it("returns an array with the absolute path as its only item", function () {
-        expect(PathExpander.expandPathWithExtensions(path, extensions)).toEqual([realPath]);
+        expect(PathExpander.expandPathWithExtensions(path, extensions)).to.eql([realPath]);
       });
     });
   });
@@ -89,18 +89,18 @@ describe("Cucumber.Cli.ArgumentParser.PathExpander", function () {
       directory  = "path/to/directory";
       extensions = ['js'];
       innerPaths = [createSpy("inner path 1"), createSpy("inner path 2"), createSpy("inner path 3")];
-      spyOn(glob, 'sync').and.returnValue(innerPaths);
+      sinon.stub(glob, 'sync').returns(innerPaths);
     });
 
     it("returns the glob result", function () {
       var paths = PathExpander.expandDirectoryWithExtensions(directory, extensions);
-      expect(paths).toEqual(innerPaths);
+      expect(paths).to.eql(innerPaths);
     });
 
     describe('one extension', function() {
       it("calls glob with the proper pattern", function () {
         PathExpander.expandDirectoryWithExtensions(directory, extensions);
-        expect(glob.sync).toHaveBeenCalledWith("path/to/directory/**/*.js");
+        expect(glob.sync).to.have.been.calledWith("path/to/directory/**/*.js");
       });
     });
 
@@ -111,7 +111,7 @@ describe("Cucumber.Cli.ArgumentParser.PathExpander", function () {
 
       it("calls glob with the proper pattern", function () {
         PathExpander.expandDirectoryWithExtensions(directory, extensions);
-        expect(glob.sync).toHaveBeenCalledWith("path/to/directory/**/*.{js,coffee}");
+        expect(glob.sync).to.have.been.calledWith("path/to/directory/**/*.{js,coffee}");
       });
     });
   });

@@ -1,4 +1,4 @@
-require('../../support/spec_helper');
+
 
 describe("Cucumber.Util.asyncForEach", function () {
   var Cucumber = requireLib('cucumber');
@@ -28,22 +28,22 @@ describe("Cucumber.Util.asyncForEach", function () {
     expect(userFunction).toHaveBeenCalledTimes(3);
     items.forEach(function (item) {
       var args = userFunction.calls.argsFor(callIndex++);
-      expect(args[0]).toBe(item);
+      expect(args[0]).to.equal(item);
       expect(args[1]).toBeAFunction();
     });
   });
 
   it("calls the asyncForEach() callback when all items have been processed and called their user function callback", function () {
     Cucumber.Util.asyncForEach(items, userFunction, callback);
-    expect(callback).toHaveBeenCalled();
-    expect(allItemsProcessedBeforeCallback).toBeTruthy();
+    expect(callback).to.have.been.called;
+    expect(allItemsProcessedBeforeCallback).to.be.ok;
   });
 
   it("does not call the asyncForEach() callback if not all items are processed", function () {
     delayItemProcessing = true;
     Cucumber.Util.asyncForEach(items, userFunction, callback);
-    expect(allItemsProcessedBeforeCallback).toBeFalsy();
-    expect(callback).not.toHaveBeenCalled();
+    expect(allItemsProcessedBeforeCallback).not.to.be.ok;
+    expect(callback).not.to.have.been.called;
   });
 
   it("does not process the next item until the current one is finished", function () {
@@ -51,6 +51,6 @@ describe("Cucumber.Util.asyncForEach", function () {
     Cucumber.Util.asyncForEach(items, userFunction, callback);
     expect(userFunction).toHaveBeenCalledTimes(1);
     var args = userFunction.calls.mostRecent().args;
-    expect(args[0]).toBe('a');
+    expect(args[0]).to.equal('a');
   });
 });

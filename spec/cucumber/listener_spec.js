@@ -15,51 +15,51 @@ describe("Cucumber.Listener", function () {
     beforeEach(function () {
       event    = createSpy("event");
       callback = createSpy("callback");
-      spyOn(listener, 'hasHandlerForEvent');
-      spyOn(listener, 'getHandlerForEvent');
+      sinon.stub(listener, 'hasHandlerForEvent');
+      sinon.stub(listener, 'getHandlerForEvent');
     });
 
     it("checks whether there is a handler for the event", function () {
       listener.hear(event, callback);
-      expect(listener.hasHandlerForEvent).toHaveBeenCalledWith(event);
+      expect(listener.hasHandlerForEvent).to.have.been.calledWith(event);
     });
 
     describe("when there is a handler for that event", function () {
       beforeEach(function () {
         eventHandler = createSpy("Event handler (function)");
-        listener.hasHandlerForEvent.and.returnValue(true);
-        listener.getHandlerForEvent.and.returnValue(eventHandler);
+        listener.hasHandlerForEvent.returns(true);
+        listener.getHandlerForEvent.returns(eventHandler);
       });
 
       it("gets the handler for that event", function () {
         listener.hear(event, callback);
-        expect(listener.getHandlerForEvent).toHaveBeenCalledWith(event);
+        expect(listener.getHandlerForEvent).to.have.been.calledWith(event);
       });
 
       it("calls the handler with the event and the callback", function () {
         listener.hear(event, callback);
-        expect(eventHandler).toHaveBeenCalledWith(event, callback);
+        expect(eventHandler).to.have.been.calledWith(event, callback);
       });
 
       it("does not callback", function () {
         listener.hear(event, callback);
-        expect(callback).not.toHaveBeenCalled();
+        expect(callback).not.to.have.been.called;
       });
     });
 
     describe("when there are no handlers for that event", function () {
       beforeEach(function () {
-        listener.hasHandlerForEvent.and.returnValue(false);
+        listener.hasHandlerForEvent.returns(false);
       });
 
       it("calls back", function () {
         listener.hear(event, callback);
-        expect(callback).toHaveBeenCalled();
+        expect(callback).to.have.been.called;
       });
 
       it("does not get the handler for the event", function () {
         listener.hear(event, callback);
-        expect(listener.getHandlerForEvent).not.toHaveBeenCalled();
+        expect(listener.getHandlerForEvent).not.to.have.been.called;
       });
     });
   });
@@ -70,12 +70,12 @@ describe("Cucumber.Listener", function () {
     beforeEach(function () {
       event            = createSpy("Event");
       eventHandlerName = createSpy("event handler name");
-      spyOn(listener, 'buildHandlerNameForEvent').and.returnValue(eventHandlerName);
+      sinon.stub(listener, 'buildHandlerNameForEvent').returns(eventHandlerName);
     });
 
     it("builds the name of the handler for that event", function () {
       listener.hasHandlerForEvent(event);
-      expect(listener.buildHandlerNameForEvent).toHaveBeenCalledWith(event);
+      expect(listener.buildHandlerNameForEvent).to.have.been.calledWith(event);
     });
 
     describe("when the handler exists", function () {
@@ -85,13 +85,13 @@ describe("Cucumber.Listener", function () {
       });
 
       it("returns true", function () {
-        expect(listener.hasHandlerForEvent(event)).toBe(true);
+        expect(listener.hasHandlerForEvent(event)).to.equal(true);
       });
     });
 
     describe("when the handler does not exist", function () {
       it("returns false", function () {
-        expect(listener.hasHandlerForEvent(event)).toBe(false);
+        expect(listener.hasHandlerForEvent(event)).to.equal(false);
       });
     });
   });
@@ -101,18 +101,18 @@ describe("Cucumber.Listener", function () {
 
     beforeEach(function () {
       eventName = "SomeEventName";
-      event     = createSpyWithStubs("Event", {getName: eventName});
-      buildHandlerName = spyOn(listener, "buildHandlerName");
+      event     = createStubbedObject({getName: eventName});
+      buildHandlerName = sinon.stub(listener, "buildHandlerName");
     });
 
     it("gets the name of the event", function () {
       listener.buildHandlerNameForEvent(event);
-      expect(event.getName).toHaveBeenCalled();
+      expect(event.getName).to.have.been.called;
     });
 
     it("calls buildHandlerName", function () {
       listener.buildHandlerNameForEvent(event);
-      expect(buildHandlerName).toHaveBeenCalled();
+      expect(buildHandlerName).to.have.been.called;
     });
   });
 
@@ -124,12 +124,12 @@ describe("Cucumber.Listener", function () {
       event            = createSpy("event");
       eventHandlerName = 'handleSomeEvent';
       eventHandler     = createSpy("event handler");
-      spyOn(listener, 'buildHandlerNameForEvent').and.returnValue(eventHandlerName);
+      sinon.stub(listener, 'buildHandlerNameForEvent').returns(eventHandlerName);
     });
 
     it("gets the name of the handler for the event", function () {
       listener.getHandlerForEvent(event);
-      expect(listener.buildHandlerNameForEvent).toHaveBeenCalledWith(event);
+      expect(listener.buildHandlerNameForEvent).to.have.been.calledWith(event);
     });
 
     describe("when an event handler exists for the event", function () {
@@ -138,7 +138,7 @@ describe("Cucumber.Listener", function () {
       });
 
       it("returns the event handler", function () {
-        expect(listener.getHandlerForEvent(event)).toBe(eventHandler);
+        expect(listener.getHandlerForEvent(event)).to.equal(eventHandler);
       });
     });
 
@@ -154,7 +154,7 @@ describe("Cucumber.Listener", function () {
       var eventName = "shortName";
       var expected = "handle" + eventName + "Event";
 
-      expect(listener.buildHandlerName(eventName)).toBe(expected);
+      expect(listener.buildHandlerName(eventName)).to.equal(expected);
     });
   });
 
@@ -164,17 +164,17 @@ describe("Cucumber.Listener", function () {
     var buildHandlerName;
 
     beforeEach(function () {
-      buildHandlerName = spyOn(listener, "buildHandlerName").and.callThrough();
+      buildHandlerName = sinon.stub(listener, "buildHandlerName").and.callThrough();
       listener.setHandlerForEvent(shortName, handler);
     });
 
     it("attaches the function as a property to itself", function () {
       var expectedKey = Cucumber.Listener.EVENT_HANDLER_NAME_PREFIX + shortName + Cucumber.Listener.EVENT_HANDLER_NAME_SUFFIX;
-      expect(listener[expectedKey]).toBe(handler);
+      expect(listener[expectedKey]).to.equal(handler);
     });
 
     it("calls buildHandlerName", function () {
-      expect(buildHandlerName).toHaveBeenCalled();
+      expect(buildHandlerName).to.have.been.called;
     });
   });
 });

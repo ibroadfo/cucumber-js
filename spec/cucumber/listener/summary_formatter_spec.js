@@ -1,4 +1,4 @@
-require('../../support/spec_helper');
+
 
 describe("Cucumber.Listener.SummaryFormatter", function () {
   var Cucumber = requireLib('cucumber');
@@ -8,19 +8,19 @@ describe("Cucumber.Listener.SummaryFormatter", function () {
 
   beforeEach(function () {
     options              = {useColors: true};
-    formatter            = createSpyWithStubs("formatter", {finish: null, log: null});
-    formatterHearMethod  = spyOnStub(formatter, 'hear');
-    spyOn(Cucumber.Listener, 'Formatter').and.returnValue(formatter);
+    formatter            = createStubbedObject({finish: null, log: null});
+    formatterHearMethod  = sinon.stubStub(formatter, 'hear');
+    sinon.stub(Cucumber.Listener, 'Formatter').returns(formatter);
     summaryFormatter = Cucumber.Listener.SummaryFormatter(options);
   });
 
   describe("constructor", function () {
     it("creates a formatter", function () {
-      expect(Cucumber.Listener.Formatter).toHaveBeenCalledWith(options);
+      expect(Cucumber.Listener.Formatter).to.have.been.calledWith(options);
     });
 
     it("extends the formatter", function () {
-      expect(summaryFormatter).toBe(formatter);
+      expect(summaryFormatter).to.equal(formatter);
     });
   });
 
@@ -28,55 +28,55 @@ describe("Cucumber.Listener.SummaryFormatter", function () {
     var event, callback, stepResult;
 
     beforeEach(function () {
-      stepResult = createSpyWithStubs("step result", {getStatus: undefined});
-      event      = createSpyWithStubs("event", {getPayloadItem: stepResult});
+      stepResult = createStubbedObject({getStatus: undefined});
+      event      = createStubbedObject({getPayloadItem: stepResult});
       callback   = createSpy("Callback");
     });
 
     it("gets the step result from the event payload", function () {
       summaryFormatter.handleStepResultEvent(event, callback);
-      expect(event.getPayloadItem).toHaveBeenCalledWith('stepResult');
+      expect(event.getPayloadItem).to.have.been.calledWith('stepResult');
     });
 
     describe("when the step was ambiguous", function () {
       beforeEach(function () {
-        stepResult.getStatus.and.returnValue(Cucumber.Status.AMBIGUOUS);
-        spyOn(summaryFormatter, 'storeAmbiguousStepResult');
+        stepResult.getStatus.returns(Cucumber.Status.AMBIGUOUS);
+        sinon.stub(summaryFormatter, 'storeAmbiguousStepResult');
       });
 
       it("handles the undefined step result", function () {
         summaryFormatter.handleStepResultEvent(event, callback);
-        expect(summaryFormatter.storeAmbiguousStepResult).toHaveBeenCalledWith(stepResult);
+        expect(summaryFormatter.storeAmbiguousStepResult).to.have.been.calledWith(stepResult);
       });
     });
 
     describe("when the step was undefined", function () {
       beforeEach(function () {
-        stepResult.getStatus.and.returnValue(Cucumber.Status.UNDEFINED);
-        spyOn(summaryFormatter, 'storeUndefinedStepResult');
+        stepResult.getStatus.returns(Cucumber.Status.UNDEFINED);
+        sinon.stub(summaryFormatter, 'storeUndefinedStepResult');
       });
 
       it("handles the undefined step result", function () {
         summaryFormatter.handleStepResultEvent(event, callback);
-        expect(summaryFormatter.storeUndefinedStepResult).toHaveBeenCalledWith(stepResult);
+        expect(summaryFormatter.storeUndefinedStepResult).to.have.been.calledWith(stepResult);
       });
     });
 
     describe("when the step failed", function () {
       beforeEach(function () {
-        stepResult.getStatus.and.returnValue(Cucumber.Status.FAILED);
-        spyOn(summaryFormatter, 'storeFailedStepResult');
+        stepResult.getStatus.returns(Cucumber.Status.FAILED);
+        sinon.stub(summaryFormatter, 'storeFailedStepResult');
       });
 
       it("handles the failed step result", function () {
         summaryFormatter.handleStepResultEvent(event, callback);
-        expect(summaryFormatter.storeFailedStepResult).toHaveBeenCalledWith(stepResult);
+        expect(summaryFormatter.storeFailedStepResult).to.have.been.calledWith(stepResult);
       });
     });
 
     it("calls back", function () {
       summaryFormatter.handleStepResultEvent(event, callback);
-      expect(callback).toHaveBeenCalled();
+      expect(callback).to.have.been.called;
     });
   });
 
@@ -85,18 +85,18 @@ describe("Cucumber.Listener.SummaryFormatter", function () {
 
     beforeEach(function () {
       featuresResult = createSpy("features result");
-      event = createSpyWithStubs("event", {getPayloadItem: featuresResult});
+      event = createStubbedObject({getPayloadItem: featuresResult});
       callback = createSpy("callback");
-      spyOn(summaryFormatter, 'logSummary');
+      sinon.stub(summaryFormatter, 'logSummary');
       summaryFormatter.handleFeaturesResultEvent(event, callback);
     });
 
     it("logs the summary", function () {
-      expect(summaryFormatter.logSummary).toHaveBeenCalledWith(featuresResult);
+      expect(summaryFormatter.logSummary).to.have.been.calledWith(featuresResult);
     });
 
     it("calls finish with the callback", function () {
-      expect(summaryFormatter.finish).toHaveBeenCalledWith(callback);
+      expect(summaryFormatter.finish).to.have.been.calledWith(callback);
     });
   });
 
@@ -105,11 +105,11 @@ describe("Cucumber.Listener.SummaryFormatter", function () {
 
     beforeEach(function () {
       featuresResult = createSpy('features result');
-      spyOn(summaryFormatter, 'logScenariosSummary');
-      spyOn(summaryFormatter, 'logStepsSummary');
-      spyOn(summaryFormatter, 'logDuration');
-      spyOn(summaryFormatter, 'logFailures');
-      spyOn(summaryFormatter, 'logWarnings');
+      sinon.stub(summaryFormatter, 'logScenariosSummary');
+      sinon.stub(summaryFormatter, 'logStepsSummary');
+      sinon.stub(summaryFormatter, 'logDuration');
+      sinon.stub(summaryFormatter, 'logFailures');
+      sinon.stub(summaryFormatter, 'logWarnings');
     });
 
     describe("without failures or warnings", function () {
@@ -118,38 +118,38 @@ describe("Cucumber.Listener.SummaryFormatter", function () {
       });
 
       it("does not log failures", function () {
-        expect(summaryFormatter.logFailures).not.toHaveBeenCalled();
+        expect(summaryFormatter.logFailures).not.to.have.been.called;
       });
 
       it("does not log warnings", function () {
-        expect(summaryFormatter.logWarnings).not.toHaveBeenCalled();
+        expect(summaryFormatter.logWarnings).not.to.have.been.called;
       });
     });
 
     describe("when there is a failed step", function () {
       beforeEach(function () {
         var failureException = {stack: 'failure exception stack'};
-        var stepResult = createSpyWithStubs("failed step result", { getFailureException: failureException });
+        var stepResult = createStubbedObject({ getFailureException: failureException });
         summaryFormatter.storeFailedStepResult(stepResult);
         summaryFormatter.logSummary(featuresResult);
       });
 
       it("logs the failures", function () {
-        expect(summaryFormatter.logFailures).toHaveBeenCalled();
+        expect(summaryFormatter.logFailures).to.have.been.called;
       });
     });
 
     describe("when there is an ambiguous step", function () {
       beforeEach(function () {
-        var stepDefintion1 = createSpyWithStubs('step defintion', {getPattern: 'a', getUri: 'path/1', getLine: 1});
-        var stepDefintion2 = createSpyWithStubs('step defintion', {getPattern: 'b', getUri: 'path/2', getLine: 2});
-        var stepResult = createSpyWithStubs("step result", {getAmbiguousStepDefinitions: [stepDefintion1, stepDefintion2]});
+        var stepDefintion1 = createStubbedObject('step defintion', {getPattern: 'a', getUri: 'path/1', getLine: 1});
+        var stepDefintion2 = createStubbedObject('step defintion', {getPattern: 'b', getUri: 'path/2', getLine: 2});
+        var stepResult = createStubbedObject({getAmbiguousStepDefinitions: [stepDefintion1, stepDefintion2]});
         summaryFormatter.storeAmbiguousStepResult(stepResult);
         summaryFormatter.logSummary(featuresResult);
       });
 
       it("logs the failures", function () {
-        expect(summaryFormatter.logFailures).toHaveBeenCalled();
+        expect(summaryFormatter.logFailures).to.have.been.called;
       });
     });
 
@@ -157,42 +157,42 @@ describe("Cucumber.Listener.SummaryFormatter", function () {
       beforeEach(function () {
         var step = createSpy("step");
         var stepResult = createSpy("step result", {getStep: step});
-        var snippetBuilder = createSpyWithStubs("snippet builder", {buildSnippet: 'snippet'});
-        spyOn(Cucumber.SupportCode, 'StepDefinitionSnippetBuilder').and.returnValue(snippetBuilder);
+        var snippetBuilder = createStubbedObject({buildSnippet: 'snippet'});
+        sinon.stub(Cucumber.SupportCode, 'StepDefinitionSnippetBuilder').returns(snippetBuilder);
         summaryFormatter.storeUndefinedStepResult(stepResult);
         summaryFormatter.logSummary(featuresResult);
       });
 
       it("logs the warnings", function () {
-        expect(summaryFormatter.logWarnings).toHaveBeenCalled();
+        expect(summaryFormatter.logWarnings).to.have.been.called;
       });
     });
 
     describe("when there is a pending step", function () {
       beforeEach(function () {
-        var stepResult = createSpyWithStubs("step result", {getPendingReason: 'not ready'});
+        var stepResult = createStubbedObject({getPendingReason: 'not ready'});
         summaryFormatter.storePendingStepResult(stepResult);
         summaryFormatter.logSummary(featuresResult);
       });
 
       it("logs warnings", function () {
-        expect(summaryFormatter.logWarnings).toHaveBeenCalled();
+        expect(summaryFormatter.logWarnings).to.have.been.called;
       });
     });
 
     it("logs the scenarios summary", function () {
       summaryFormatter.logSummary(featuresResult);
-      expect(summaryFormatter.logScenariosSummary).toHaveBeenCalledWith(featuresResult);
+      expect(summaryFormatter.logScenariosSummary).to.have.been.calledWith(featuresResult);
     });
 
     it("logs the steps summary", function () {
       summaryFormatter.logSummary(featuresResult);
-      expect(summaryFormatter.logStepsSummary).toHaveBeenCalledWith(featuresResult);
+      expect(summaryFormatter.logStepsSummary).to.have.been.calledWith(featuresResult);
     });
 
     it("logs the duration", function () {
       summaryFormatter.logSummary(featuresResult);
-      expect(summaryFormatter.logDuration).toHaveBeenCalledWith(featuresResult);
+      expect(summaryFormatter.logDuration).to.have.been.calledWith(featuresResult);
     });
   });
 
@@ -200,42 +200,42 @@ describe("Cucumber.Listener.SummaryFormatter", function () {
     var scenario, step;
 
     beforeEach(function() {
-      scenario = createSpyWithStubs('step', {getName: 'scenarioName', getUri: 'path/to/scenario', getLine: 1, hasUri: true});
-      step = createSpyWithStubs('step', {getKeyword: 'stepKeyword ', getName: 'stepName', getUri: 'path/to/step', getLine: 2, getScenario: scenario, hasUri: true});
+      scenario = createStubbedObject('step', {getName: 'scenarioName', getUri: 'path/to/scenario', getLine: 1, hasUri: true});
+      step = createStubbedObject('step', {getKeyword: 'stepKeyword ', getName: 'stepName', getUri: 'path/to/step', getLine: 2, getScenario: scenario, hasUri: true});
     });
 
     describe("when there is a failed step", function () {
       beforeEach(function () {
-        var stepDefintion = createSpyWithStubs('step defintion', {getPattern: 'a', getUri: 'path/to/stepDefintion', getLine: 3});
+        var stepDefintion = createStubbedObject('step defintion', {getPattern: 'a', getUri: 'path/to/stepDefintion', getLine: 3});
         var failureException = {stack: 'failure exception stack'};
-        var stepResult = createSpyWithStubs("failed step result", {getFailureException: failureException, getStatus: Cucumber.Status.FAILED, getStepDefinition: stepDefintion, getStep: step});
+        var stepResult = createStubbedObject({getFailureException: failureException, getStatus: Cucumber.Status.FAILED, getStepDefinition: stepDefintion, getStep: step});
         summaryFormatter.storeFailedStepResult(stepResult);
       });
 
       it("logs the failures", function () {
         summaryFormatter.logFailures();
-        expect(summaryFormatter.log).toHaveBeenCalledWith('Failures:\n\n');
+        expect(summaryFormatter.log).to.have.been.calledWith('Failures:\n\n');
         var expected =
           '1) Scenario: ' + colors.bold('scenarioName') + ' - ' + colors.gray('path/to/scenario:1') + '\n' +
           '   Step: ' + colors.bold('stepKeyword stepName') + ' - ' + colors.gray('path/to/step:2') + '\n' +
           '   Step Definition: ' + colors.gray('path/to/stepDefintion:3') + '\n' +
           '   Message:' + '\n' +
           '     ' + colors.red('failure exception stack') + '\n\n';
-        expect(summaryFormatter.log).toHaveBeenCalledWith(expected);
+        expect(summaryFormatter.log).to.have.been.calledWith(expected);
       });
     });
 
     describe("when there is an ambiguous step", function () {
       beforeEach(function () {
-        var stepDefinition1 = createSpyWithStubs('step definition', {getPattern: 'pattern 1', getUri: 'path/to/stepDefinition1', getLine: 3});
-        var stepDefinition2 = createSpyWithStubs('step definition', {getPattern: 'longer pattern 2', getUri: 'path/to/stepDefinition2', getLine: 4});
-        var stepResult = createSpyWithStubs("step result", {getAmbiguousStepDefinitions: [stepDefinition1, stepDefinition2], getStatus: Cucumber.Status.AMBIGUOUS, getStep: step, getStepDefinition: null});
+        var stepDefinition1 = createStubbedObject('step definition', {getPattern: 'pattern 1', getUri: 'path/to/stepDefinition1', getLine: 3});
+        var stepDefinition2 = createStubbedObject('step definition', {getPattern: 'longer pattern 2', getUri: 'path/to/stepDefinition2', getLine: 4});
+        var stepResult = createStubbedObject({getAmbiguousStepDefinitions: [stepDefinition1, stepDefinition2], getStatus: Cucumber.Status.AMBIGUOUS, getStep: step, getStepDefinition: null});
         summaryFormatter.storeAmbiguousStepResult(stepResult);
       });
 
       it("logs the failures", function () {
         summaryFormatter.logFailures();
-        expect(summaryFormatter.log).toHaveBeenCalledWith('Failures:\n\n');
+        expect(summaryFormatter.log).to.have.been.calledWith('Failures:\n\n');
         var expected =
           '1) Scenario: ' + colors.bold('scenarioName') + ' - ' + colors.gray('path/to/scenario:1') + '\n' +
           '   Step: ' + colors.bold('stepKeyword stepName') + ' - ' + colors.gray('path/to/step:2') + '\n' +
@@ -243,7 +243,7 @@ describe("Cucumber.Listener.SummaryFormatter", function () {
           '     ' + colors.red('Multiple step definitions match:' + '\n' +
           '       pattern 1        - path/to/stepDefinition1:3' + '\n' +
           '       longer pattern 2 - path/to/stepDefinition2:4') + '\n\n';
-        expect(summaryFormatter.log).toHaveBeenCalledWith(expected);
+        expect(summaryFormatter.log).to.have.been.calledWith(expected);
       });
     });
   });
@@ -382,39 +382,39 @@ describe("Cucumber.Listener.SummaryFormatter", function () {
     var featuresResult;
 
     beforeEach(function () {
-      featuresResult = createSpyWithStubs('features result', {getDuration: null});
+      featuresResult = createStubbedObject('features result', {getDuration: null});
     });
 
     describe('with duration less than a second', function (){
       beforeEach(function () {
-        featuresResult.getDuration.and.returnValue(1e6);
+        featuresResult.getDuration.returns(1e6);
       });
 
       it("logs the duration", function () {
         summaryFormatter.logDuration(featuresResult);
-        expect(summaryFormatter.log).toHaveBeenCalledWith('0m00.001s\n');
+        expect(summaryFormatter.log).to.have.been.calledWith('0m00.001s\n');
       });
     });
 
     describe('with duration that is a few seconds', function (){
       beforeEach(function () {
-        featuresResult.getDuration.and.returnValue(12345 * 1e6);
+        featuresResult.getDuration.returns(12345 * 1e6);
       });
 
       it("logs the duration", function () {
         summaryFormatter.logDuration(featuresResult);
-        expect(summaryFormatter.log).toHaveBeenCalledWith('0m12.345s\n');
+        expect(summaryFormatter.log).to.have.been.calledWith('0m12.345s\n');
       });
     });
 
     describe('with duration that is a few minutes', function (){
       beforeEach(function () {
-        featuresResult.getDuration.and.returnValue(12 * 60 * 1e9 + 34567 * 1e6);
+        featuresResult.getDuration.returns(12 * 60 * 1e9 + 34567 * 1e6);
       });
 
       it("logs the duration", function () {
         summaryFormatter.logDuration(featuresResult);
-        expect(summaryFormatter.log).toHaveBeenCalledWith('12m34.567s\n');
+        expect(summaryFormatter.log).to.have.been.calledWith('12m34.567s\n');
       });
     });
   });

@@ -1,4 +1,4 @@
-require('../../support/spec_helper');
+
 
 describe("Cucumber.Runtime.ScenarioRunner", function () {
   var Cucumber = requireLib('cucumber');
@@ -7,17 +7,17 @@ describe("Cucumber.Runtime.ScenarioRunner", function () {
   beforeEach(function () {
     world = createSpy('world');
     defaultTimeout = createSpy('defaultTimeout');
-    scenario = createSpyWithStubs("Scenario", {
+    scenario = createStubbedObject({
       getSteps: []
     });
-    supportCodeLibrary = createSpyWithStubs("Support code library", {
+    supportCodeLibrary = createStubbedObject({
       getDefaultTimeout: defaultTimeout,
       instantiateNewWorld: world,
       lookupBeforeHooksByScenario: [],
       lookupAfterHooksByScenario: [],
       lookupStepDefinitionsByName: []
     });
-    eventBroadcaster = createSpyWithStubs("Event Broadcaster", {broadcastEvent: null, broadcastAroundEvent: null});
+    eventBroadcaster = createStubbedObject({broadcastEvent: null, broadcastAroundEvent: null});
     eventBroadcaster.broadcastAroundEvent.and.callFake(function(event, userFunction, callback) {
       userFunction(function(){
         callback.apply(null, arguments);
@@ -44,12 +44,12 @@ describe("Cucumber.Runtime.ScenarioRunner", function () {
       it('broadcasts a scenario event', function() {
         expect(eventBroadcaster.broadcastAroundEvent).toHaveBeenCalledTimes(1);
         var event = eventBroadcaster.broadcastAroundEvent.calls.argsFor(0)[0];
-        expect(event.getName()).toEqual(Cucumber.Events.SCENARIO_EVENT_NAME);
-        expect(event.getPayloadItem('scenario')).toEqual(scenario);
+        expect(event.getName()).to.eql(Cucumber.Events.SCENARIO_EVENT_NAME);
+        expect(event.getPayloadItem('scenario')).to.eql(scenario);
       });
 
       it('returns a passing result', function() {
-        expect(result.getStatus()).toEqual(Cucumber.Status.PASSED);
+        expect(result.getStatus()).to.eql(Cucumber.Status.PASSED);
       });
     });
 
@@ -59,10 +59,10 @@ describe("Cucumber.Runtime.ScenarioRunner", function () {
       beforeEach(function(done) {
         step = Cucumber.Ast.Step({});
         stepResult = Cucumber.Runtime.StepResult({duration: 1, status: Cucumber.Status.PASSED, step: step});
-        stepDefinition = createSpyWithStubs('stepDefinition', {invoke: null});
+        stepDefinition = createStubbedObject('stepDefinition', {invoke: null});
         stepDefinition.invoke.and.callFake(function(){ arguments[4](stepResult); });
-        supportCodeLibrary.lookupStepDefinitionsByName.and.returnValue([stepDefinition]);
-        scenario.getSteps.and.returnValue([step]);
+        supportCodeLibrary.lookupStepDefinitionsByName.returns([stepDefinition]);
+        scenario.getSteps.returns([step]);
         scenarioRunner.run(function(value) {
           result = value;
           done();
@@ -74,24 +74,24 @@ describe("Cucumber.Runtime.ScenarioRunner", function () {
         expect(eventBroadcaster.broadcastEvent).toHaveBeenCalledTimes(2);
 
         var event = eventBroadcaster.broadcastAroundEvent.calls.argsFor(0)[0];
-        expect(event.getName()).toEqual(Cucumber.Events.SCENARIO_EVENT_NAME);
-        expect(event.getPayloadItem('scenario')).toEqual(scenario);
+        expect(event.getName()).to.eql(Cucumber.Events.SCENARIO_EVENT_NAME);
+        expect(event.getPayloadItem('scenario')).to.eql(scenario);
 
         event = eventBroadcaster.broadcastAroundEvent.calls.argsFor(1)[0];
-        expect(event.getName()).toEqual(Cucumber.Events.STEP_EVENT_NAME);
-        expect(event.getPayloadItem('step')).toEqual(step);
+        expect(event.getName()).to.eql(Cucumber.Events.STEP_EVENT_NAME);
+        expect(event.getPayloadItem('step')).to.eql(step);
 
         event = eventBroadcaster.broadcastEvent.calls.argsFor(0)[0];
-        expect(event.getName()).toEqual(Cucumber.Events.STEP_RESULT_EVENT_NAME);
-        expect(event.getPayloadItem('stepResult')).toEqual(stepResult);
+        expect(event.getName()).to.eql(Cucumber.Events.STEP_RESULT_EVENT_NAME);
+        expect(event.getPayloadItem('stepResult')).to.eql(stepResult);
 
         event = eventBroadcaster.broadcastEvent.calls.argsFor(1)[0];
-        expect(event.getName()).toEqual(Cucumber.Events.SCENARIO_RESULT_EVENT_NAME);
-        expect(event.getPayloadItem('scenarioResult')).toEqual(result);
+        expect(event.getName()).to.eql(Cucumber.Events.SCENARIO_RESULT_EVENT_NAME);
+        expect(event.getPayloadItem('scenarioResult')).to.eql(result);
       });
 
       it('returns a passing result', function() {
-        expect(result.getStatus()).toEqual(Cucumber.Status.PASSED);
+        expect(result.getStatus()).to.eql(Cucumber.Status.PASSED);
       });
     });
 
@@ -101,10 +101,10 @@ describe("Cucumber.Runtime.ScenarioRunner", function () {
       beforeEach(function(done) {
         step = Cucumber.Ast.Step({});
         stepResult = Cucumber.Runtime.StepResult({duration: 1, status: Cucumber.Status.FAILED, step: step});
-        stepDefinition = createSpyWithStubs('stepDefinition', {invoke: null});
+        stepDefinition = createStubbedObject('stepDefinition', {invoke: null});
         stepDefinition.invoke.and.callFake(function(){ arguments[4](stepResult); });
-        supportCodeLibrary.lookupStepDefinitionsByName.and.returnValue([stepDefinition]);
-        scenario.getSteps.and.returnValue([step]);
+        supportCodeLibrary.lookupStepDefinitionsByName.returns([stepDefinition]);
+        scenario.getSteps.returns([step]);
         scenarioRunner.run(function(value) {
           result = value;
           done();
@@ -116,24 +116,24 @@ describe("Cucumber.Runtime.ScenarioRunner", function () {
         expect(eventBroadcaster.broadcastEvent).toHaveBeenCalledTimes(2);
 
         var event = eventBroadcaster.broadcastAroundEvent.calls.argsFor(0)[0];
-        expect(event.getName()).toEqual(Cucumber.Events.SCENARIO_EVENT_NAME);
-        expect(event.getPayloadItem('scenario')).toEqual(scenario);
+        expect(event.getName()).to.eql(Cucumber.Events.SCENARIO_EVENT_NAME);
+        expect(event.getPayloadItem('scenario')).to.eql(scenario);
 
         event = eventBroadcaster.broadcastAroundEvent.calls.argsFor(1)[0];
-        expect(event.getName()).toEqual(Cucumber.Events.STEP_EVENT_NAME);
-        expect(event.getPayloadItem('step')).toEqual(step);
+        expect(event.getName()).to.eql(Cucumber.Events.STEP_EVENT_NAME);
+        expect(event.getPayloadItem('step')).to.eql(step);
 
         event = eventBroadcaster.broadcastEvent.calls.argsFor(0)[0];
-        expect(event.getName()).toEqual(Cucumber.Events.STEP_RESULT_EVENT_NAME);
-        expect(event.getPayloadItem('stepResult')).toEqual(stepResult);
+        expect(event.getName()).to.eql(Cucumber.Events.STEP_RESULT_EVENT_NAME);
+        expect(event.getPayloadItem('stepResult')).to.eql(stepResult);
 
         event = eventBroadcaster.broadcastEvent.calls.argsFor(1)[0];
-        expect(event.getName()).toEqual(Cucumber.Events.SCENARIO_RESULT_EVENT_NAME);
-        expect(event.getPayloadItem('scenarioResult')).toEqual(result);
+        expect(event.getName()).to.eql(Cucumber.Events.SCENARIO_RESULT_EVENT_NAME);
+        expect(event.getPayloadItem('scenarioResult')).to.eql(result);
       });
 
       it('returns a failed result', function() {
-        expect(result.getStatus()).toEqual(Cucumber.Status.FAILED);
+        expect(result.getStatus()).to.eql(Cucumber.Status.FAILED);
       });
     });
 
@@ -143,8 +143,8 @@ describe("Cucumber.Runtime.ScenarioRunner", function () {
       beforeEach(function(done) {
         step = Cucumber.Ast.Step({});
         stepDefinitions = [createSpy('stepDefinition1'), createSpy('stepDefinition2')];
-        supportCodeLibrary.lookupStepDefinitionsByName.and.returnValue(stepDefinitions);
-        scenario.getSteps.and.returnValue([step]);
+        supportCodeLibrary.lookupStepDefinitionsByName.returns(stepDefinitions);
+        scenario.getSteps.returns([step]);
         scenarioRunner.run(function(value) {
           result = value;
           done();
@@ -156,26 +156,26 @@ describe("Cucumber.Runtime.ScenarioRunner", function () {
         expect(eventBroadcaster.broadcastEvent).toHaveBeenCalledTimes(2);
 
         var event = eventBroadcaster.broadcastAroundEvent.calls.argsFor(0)[0];
-        expect(event.getName()).toEqual(Cucumber.Events.SCENARIO_EVENT_NAME);
-        expect(event.getPayloadItem('scenario')).toEqual(scenario);
+        expect(event.getName()).to.eql(Cucumber.Events.SCENARIO_EVENT_NAME);
+        expect(event.getPayloadItem('scenario')).to.eql(scenario);
 
         event = eventBroadcaster.broadcastAroundEvent.calls.argsFor(1)[0];
-        expect(event.getName()).toEqual(Cucumber.Events.STEP_EVENT_NAME);
-        expect(event.getPayloadItem('step')).toEqual(step);
+        expect(event.getName()).to.eql(Cucumber.Events.STEP_EVENT_NAME);
+        expect(event.getPayloadItem('step')).to.eql(step);
 
         event = eventBroadcaster.broadcastEvent.calls.argsFor(0)[0];
-        expect(event.getName()).toEqual(Cucumber.Events.STEP_RESULT_EVENT_NAME);
+        expect(event.getName()).to.eql(Cucumber.Events.STEP_RESULT_EVENT_NAME);
         var stepResult = event.getPayloadItem('stepResult');
-        expect(stepResult.getStatus()).toEqual(Cucumber.Status.AMBIGUOUS);
-        expect(stepResult.getAmbiguousStepDefinitions()).toEqual(stepDefinitions);
+        expect(stepResult.getStatus()).to.eql(Cucumber.Status.AMBIGUOUS);
+        expect(stepResult.getAmbiguousStepDefinitions()).to.eql(stepDefinitions);
 
         event = eventBroadcaster.broadcastEvent.calls.argsFor(1)[0];
-        expect(event.getName()).toEqual(Cucumber.Events.SCENARIO_RESULT_EVENT_NAME);
-        expect(event.getPayloadItem('scenarioResult')).toEqual(result);
+        expect(event.getName()).to.eql(Cucumber.Events.SCENARIO_RESULT_EVENT_NAME);
+        expect(event.getPayloadItem('scenarioResult')).to.eql(result);
       });
 
       it('returns a failed result', function() {
-        expect(result.getStatus()).toEqual(Cucumber.Status.AMBIGUOUS);
+        expect(result.getStatus()).to.eql(Cucumber.Status.AMBIGUOUS);
       });
     });
 
@@ -184,7 +184,7 @@ describe("Cucumber.Runtime.ScenarioRunner", function () {
 
       beforeEach(function(done) {
         step = Cucumber.Ast.Step({});
-        scenario.getSteps.and.returnValue([step]);
+        scenario.getSteps.returns([step]);
         scenarioRunner.run(function(value) {
           result = value;
           done();
@@ -196,25 +196,25 @@ describe("Cucumber.Runtime.ScenarioRunner", function () {
         expect(eventBroadcaster.broadcastEvent).toHaveBeenCalledTimes(2);
 
         var event = eventBroadcaster.broadcastAroundEvent.calls.argsFor(0)[0];
-        expect(event.getName()).toEqual(Cucumber.Events.SCENARIO_EVENT_NAME);
-        expect(event.getPayloadItem('scenario')).toEqual(scenario);
+        expect(event.getName()).to.eql(Cucumber.Events.SCENARIO_EVENT_NAME);
+        expect(event.getPayloadItem('scenario')).to.eql(scenario);
 
         event = eventBroadcaster.broadcastAroundEvent.calls.argsFor(1)[0];
-        expect(event.getName()).toEqual(Cucumber.Events.STEP_EVENT_NAME);
-        expect(event.getPayloadItem('step')).toEqual(step);
+        expect(event.getName()).to.eql(Cucumber.Events.STEP_EVENT_NAME);
+        expect(event.getPayloadItem('step')).to.eql(step);
 
         event = eventBroadcaster.broadcastEvent.calls.argsFor(0)[0];
-        expect(event.getName()).toEqual(Cucumber.Events.STEP_RESULT_EVENT_NAME);
+        expect(event.getName()).to.eql(Cucumber.Events.STEP_RESULT_EVENT_NAME);
         var stepResult = event.getPayloadItem('stepResult');
-        expect(stepResult.getStatus()).toEqual(Cucumber.Status.UNDEFINED);
+        expect(stepResult.getStatus()).to.eql(Cucumber.Status.UNDEFINED);
 
         event = eventBroadcaster.broadcastEvent.calls.argsFor(1)[0];
-        expect(event.getName()).toEqual(Cucumber.Events.SCENARIO_RESULT_EVENT_NAME);
-        expect(event.getPayloadItem('scenarioResult')).toEqual(result);
+        expect(event.getName()).to.eql(Cucumber.Events.SCENARIO_RESULT_EVENT_NAME);
+        expect(event.getPayloadItem('scenarioResult')).to.eql(result);
       });
 
       it('returns a failed result', function() {
-        expect(result.getStatus()).toEqual(Cucumber.Status.UNDEFINED);
+        expect(result.getStatus()).to.eql(Cucumber.Status.UNDEFINED);
       });
     });
 
@@ -225,8 +225,8 @@ describe("Cucumber.Runtime.ScenarioRunner", function () {
         options.dryRun = true;
         step = Cucumber.Ast.Step({});
         stepDefinition = createSpy('stepDefinition');
-        supportCodeLibrary.lookupStepDefinitionsByName.and.returnValue([stepDefinition]);
-        scenario.getSteps.and.returnValue([step]);
+        supportCodeLibrary.lookupStepDefinitionsByName.returns([stepDefinition]);
+        scenario.getSteps.returns([step]);
         scenarioRunner.run(function(value) {
           result = value;
           done();
@@ -238,25 +238,25 @@ describe("Cucumber.Runtime.ScenarioRunner", function () {
         expect(eventBroadcaster.broadcastEvent).toHaveBeenCalledTimes(2);
 
         var event = eventBroadcaster.broadcastAroundEvent.calls.argsFor(0)[0];
-        expect(event.getName()).toEqual(Cucumber.Events.SCENARIO_EVENT_NAME);
-        expect(event.getPayloadItem('scenario')).toEqual(scenario);
+        expect(event.getName()).to.eql(Cucumber.Events.SCENARIO_EVENT_NAME);
+        expect(event.getPayloadItem('scenario')).to.eql(scenario);
 
         event = eventBroadcaster.broadcastAroundEvent.calls.argsFor(1)[0];
-        expect(event.getName()).toEqual(Cucumber.Events.STEP_EVENT_NAME);
-        expect(event.getPayloadItem('step')).toEqual(step);
+        expect(event.getName()).to.eql(Cucumber.Events.STEP_EVENT_NAME);
+        expect(event.getPayloadItem('step')).to.eql(step);
 
         event = eventBroadcaster.broadcastEvent.calls.argsFor(0)[0];
-        expect(event.getName()).toEqual(Cucumber.Events.STEP_RESULT_EVENT_NAME);
+        expect(event.getName()).to.eql(Cucumber.Events.STEP_RESULT_EVENT_NAME);
         var stepResult = event.getPayloadItem('stepResult');
-        expect(stepResult.getStatus()).toEqual(Cucumber.Status.SKIPPED);
+        expect(stepResult.getStatus()).to.eql(Cucumber.Status.SKIPPED);
 
         event = eventBroadcaster.broadcastEvent.calls.argsFor(1)[0];
-        expect(event.getName()).toEqual(Cucumber.Events.SCENARIO_RESULT_EVENT_NAME);
-        expect(event.getPayloadItem('scenarioResult')).toEqual(result);
+        expect(event.getName()).to.eql(Cucumber.Events.SCENARIO_RESULT_EVENT_NAME);
+        expect(event.getPayloadItem('scenarioResult')).to.eql(result);
       });
 
       it('returns a failed result', function() {
-        expect(result.getStatus()).toEqual(Cucumber.Status.SKIPPED);
+        expect(result.getStatus()).to.eql(Cucumber.Status.SKIPPED);
       });
     });
   });

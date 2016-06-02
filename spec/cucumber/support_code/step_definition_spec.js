@@ -1,24 +1,24 @@
-require('../../support/spec_helper');
+
 
 describe("Cucumber.SupportCode.StepDefinition", function () {
   var Cucumber = requireLib('cucumber');
   var stepDefinition, pattern, stepDefinitionCode;
 
   beforeEach(function () {
-    pattern            = createSpyWithStubs("pattern", {test: null});
+    pattern            = createStubbedObject({test: null});
     stepDefinitionCode = createSpy("step definition code");
-    spyOn(global, 'RegExp');
+    sinon.stub(global, 'RegExp');
     stepDefinition = Cucumber.SupportCode.StepDefinition(pattern, {}, stepDefinitionCode);
   });
 
   describe("getPatternRegexp()", function () {
     describe("when the pattern is a RegExp", function () {
       it("does not instantiate a RegExp", function () {
-        expect(global.RegExp).not.toHaveBeenCalled();
+        expect(global.RegExp).not.to.have.been.called;
       });
 
       it("returns the pattern itself", function () {
-        expect(stepDefinition.getPatternRegexp()).toBe(pattern);
+        expect(stepDefinition.getPatternRegexp()).to.equal(pattern);
       });
     });
 
@@ -28,35 +28,35 @@ describe("Cucumber.SupportCode.StepDefinition", function () {
       beforeEach(function () {
         regexp                                  = createSpy("regexp");
         regexpString                            = "regexp string";
-        safeString                              = createSpyWithStubs("safe string");
-        quotedDollarParameterSubstitutedPattern = createSpyWithStubs("quoted dollar param substituted pattern", {replace: regexpString});
-        spyOnStub(pattern, 'replace').and.returnValue(safeString);
-        spyOnStub(safeString, 'replace').and.returnValue(quotedDollarParameterSubstitutedPattern);
-        global.RegExp.and.returnValue(regexp);
+        safeString                              = createStubbedObject("safe string");
+        quotedDollarParameterSubstitutedPattern = createStubbedObject({replace: regexpString});
+        sinon.stubStub(pattern, 'replace').returns(safeString);
+        sinon.stubStub(safeString, 'replace').returns(quotedDollarParameterSubstitutedPattern);
+        global.RegExp.returns(regexp);
       });
 
       it("escapes unsafe regexp characters from the string", function () {
         stepDefinition.getPatternRegexp();
-        expect(pattern.replace).toHaveBeenCalledWith(Cucumber.SupportCode.StepDefinition.UNSAFE_STRING_CHARACTERS_REGEXP, Cucumber.SupportCode.StepDefinition.PREVIOUS_REGEXP_MATCH);
+        expect(pattern.replace).to.have.been.calledWith(Cucumber.SupportCode.StepDefinition.UNSAFE_STRING_CHARACTERS_REGEXP, Cucumber.SupportCode.StepDefinition.PREVIOUS_REGEXP_MATCH);
       });
 
       it("replaces quoted dollar-prefixed parameters with the regexp equivalent", function () {
         stepDefinition.getPatternRegexp();
-        expect(safeString.replace).toHaveBeenCalledWith(Cucumber.SupportCode.StepDefinition.QUOTED_DOLLAR_PARAMETER_REGEXP, Cucumber.SupportCode.StepDefinition.QUOTED_DOLLAR_PARAMETER_SUBSTITUTION);
+        expect(safeString.replace).to.have.been.calledWith(Cucumber.SupportCode.StepDefinition.QUOTED_DOLLAR_PARAMETER_REGEXP, Cucumber.SupportCode.StepDefinition.QUOTED_DOLLAR_PARAMETER_SUBSTITUTION);
       });
 
       it("replaces other dollar-prefixed parameter with the regexp equivalent", function () {
         stepDefinition.getPatternRegexp();
-        expect(quotedDollarParameterSubstitutedPattern.replace).toHaveBeenCalledWith(Cucumber.SupportCode.StepDefinition.DOLLAR_PARAMETER_REGEXP, Cucumber.SupportCode.StepDefinition.DOLLAR_PARAMETER_SUBSTITUTION);
+        expect(quotedDollarParameterSubstitutedPattern.replace).to.have.been.calledWith(Cucumber.SupportCode.StepDefinition.DOLLAR_PARAMETER_REGEXP, Cucumber.SupportCode.StepDefinition.DOLLAR_PARAMETER_SUBSTITUTION);
       });
 
       it("instantiates a new RegExp", function () {
         stepDefinition.getPatternRegexp();
-        expect(global.RegExp).toHaveBeenCalledWith("^" + regexpString + "$");
+        expect(global.RegExp).to.have.been.calledWith("^" + regexpString + "$");
       });
 
       it("returns the new RegExp", function () {
-        expect(stepDefinition.getPatternRegexp()).toBe(regexp);
+        expect(stepDefinition.getPatternRegexp()).to.equal(regexp);
       });
     });
   });
@@ -67,22 +67,22 @@ describe("Cucumber.SupportCode.StepDefinition", function () {
     beforeEach(function () {
       stepName      = createSpy("step name");
       matchResult   = createSpy("step match result (boolean)");
-      patternRegexp = createSpyWithStubs("pattern regexp", {test: matchResult});
-      spyOn(stepDefinition, 'getPatternRegexp').and.returnValue(patternRegexp);
+      patternRegexp = createStubbedObject({test: matchResult});
+      sinon.stub(stepDefinition, 'getPatternRegexp').returns(patternRegexp);
     });
 
     it("gets the pattern regexp", function () {
       stepDefinition.matchesStepName(stepName);
-      expect(stepDefinition.getPatternRegexp).toHaveBeenCalled();
+      expect(stepDefinition.getPatternRegexp).to.have.been.called;
     });
 
     it("tests the string against the step name", function () {
       stepDefinition.matchesStepName(stepName);
-      expect(patternRegexp.test).toHaveBeenCalledWith(stepName);
+      expect(patternRegexp.test).to.have.been.calledWith(stepName);
     });
 
     it("returns the match result", function () {
-      expect(stepDefinition.matchesStepName(stepName)).toBe(matchResult);
+      expect(stepDefinition.matchesStepName(stepName)).to.equal(matchResult);
     });
   });
 
@@ -92,25 +92,25 @@ describe("Cucumber.SupportCode.StepDefinition", function () {
     beforeEach(function () {
       step = createSpy("step");
       world = createSpy("world");
-      scenario = createSpyWithStubs("scenario", {getAttachments: undefined});
+      scenario = createStubbedObject({getAttachments: undefined});
       defaultTimeout = 5 * 1000;
       callback = createSpy("callback");
       parameters = createSpy("code execution parameters");
-      spyOn(Cucumber.Util, 'run');
-      spyOn(stepDefinition, 'buildInvocationParameters').and.returnValue(parameters);
+      sinon.stub(Cucumber.Util, 'run');
+      sinon.stub(stepDefinition, 'buildInvocationParameters').returns(parameters);
       stepDefinition.invoke(step, world, scenario, defaultTimeout, callback);
     });
 
     it("builds the step invocation parameters", function () {
-      expect(stepDefinition.buildInvocationParameters).toHaveBeenCalledWith(step, scenario);
+      expect(stepDefinition.buildInvocationParameters).to.have.been.calledWith(step, scenario);
     });
 
     it("runs the function", function () {
-      expect(Cucumber.Util.run).toHaveBeenCalledWith(stepDefinitionCode, world, parameters, defaultTimeout, jasmine.any(Function));
+      expect(Cucumber.Util.run).to.have.been.calledWith(stepDefinitionCode, world, parameters, defaultTimeout, jasmine.any(Function));
     });
 
     it("does not call back", function () {
-      expect(callback).not.toHaveBeenCalled();
+      expect(callback).not.to.have.been.called;
     });
 
     describe("function run completes", function() {
@@ -119,22 +119,22 @@ describe("Cucumber.SupportCode.StepDefinition", function () {
       beforeEach(function () {
         stepResult = createSpy("step result");
         attachments = createSpy("attachments");
-        spyOn(Cucumber.Runtime, 'StepResult').and.returnValue(stepResult);
+        sinon.stub(Cucumber.Runtime, 'StepResult').returns(stepResult);
       });
 
       describe("without error", function() {
         beforeEach(function () {
-          spyOnStub(scenario, 'getAttachments').and.returnValue(attachments);
+          sinon.stubStub(scenario, 'getAttachments').returns(attachments);
           var runCallback = Cucumber.Util.run.calls.mostRecent().args[4];
           runCallback();
         });
 
         it("gets the attachments from the scenario", function () {
-          expect(scenario.getAttachments).toHaveBeenCalled();
+          expect(scenario.getAttachments).to.have.been.called;
         });
 
         it("creates a successful step result", function () {
-          expect(Cucumber.Runtime.StepResult).toHaveBeenCalledWith({
+          expect(Cucumber.Runtime.StepResult).to.have.been.calledWith({
             step: step,
             stepDefinition: stepDefinition,
             duration: jasmine.any(Number),
@@ -144,14 +144,14 @@ describe("Cucumber.SupportCode.StepDefinition", function () {
         });
 
         it("calls back", function () {
-          expect(callback).toHaveBeenCalledWith(stepResult);
+          expect(callback).to.have.been.calledWith(stepResult);
         });
       });
 
       describe("with error", function () {
         var runCallback;
         beforeEach(function () {
-          spyOnStub(scenario, 'getAttachments').and.returnValue(attachments);
+          sinon.stubStub(scenario, 'getAttachments').returns(attachments);
           runCallback = Cucumber.Util.run.calls.mostRecent().args[4];
         });
         describe("of string type", function () {
@@ -161,11 +161,11 @@ describe("Cucumber.SupportCode.StepDefinition", function () {
           });
 
           it("gets the attachments from the scenario", function () {
-            expect(scenario.getAttachments).toHaveBeenCalled();
+            expect(scenario.getAttachments).to.have.been.called;
           });
 
           it("creates a failing step result", function () {
-            expect(Cucumber.Runtime.StepResult).toHaveBeenCalledWith({
+            expect(Cucumber.Runtime.StepResult).to.have.been.calledWith({
               step: step,
               stepDefinition: stepDefinition,
               failureException: failureReason,
@@ -176,7 +176,7 @@ describe("Cucumber.SupportCode.StepDefinition", function () {
           });
 
           it("calls back", function () {
-            expect(callback).toHaveBeenCalledWith(stepResult);
+            expect(callback).to.have.been.calledWith(stepResult);
           });
         });
 
@@ -185,7 +185,7 @@ describe("Cucumber.SupportCode.StepDefinition", function () {
             var nonSerializableErrorObject = {};
             nonSerializableErrorObject.member = nonSerializableErrorObject;
             runCallback(nonSerializableErrorObject);
-            expect(Cucumber.Runtime.StepResult).toHaveBeenCalledWith({
+            expect(Cucumber.Runtime.StepResult).to.have.been.calledWith({
               step: step,
               stepDefinition: stepDefinition,
               failureException: jasmine.any(String),
@@ -200,7 +200,7 @@ describe("Cucumber.SupportCode.StepDefinition", function () {
           it("creates a failing step result with the Error for failureException", function () {
             var testError = new Error("Test Error");
             runCallback(testError);
-            expect(Cucumber.Runtime.StepResult).toHaveBeenCalledWith({
+            expect(Cucumber.Runtime.StepResult).to.have.been.calledWith({
               step: step,
               stepDefinition: stepDefinition,
               failureException: testError,
@@ -214,17 +214,17 @@ describe("Cucumber.SupportCode.StepDefinition", function () {
 
       describe("with 'pending'", function () {
         beforeEach(function () {
-          spyOnStub(scenario, "getAttachments").and.returnValue(attachments);
+          sinon.stubStub(scenario, "getAttachments").returns(attachments);
           var runCallback = Cucumber.Util.run.calls.mostRecent().args[4];
           runCallback(null, 'pending');
         });
 
         it("gets the attachments from the scenario", function () {
-          expect(scenario.getAttachments).toHaveBeenCalled();
+          expect(scenario.getAttachments).to.have.been.called;
         });
 
         it("creates a pending step result", function () {
-          expect(Cucumber.Runtime.StepResult).toHaveBeenCalledWith({
+          expect(Cucumber.Runtime.StepResult).to.have.been.calledWith({
             step: step,
             stepDefinition: stepDefinition,
             duration: jasmine.any(Number),
@@ -234,7 +234,7 @@ describe("Cucumber.SupportCode.StepDefinition", function () {
         });
 
         it("calls back", function () {
-          expect(callback).toHaveBeenCalledWith(stepResult);
+          expect(callback).to.have.been.calledWith(stepResult);
         });
       });
     });
@@ -247,34 +247,34 @@ describe("Cucumber.SupportCode.StepDefinition", function () {
     beforeEach(function () {
       stepName = createSpy("step name to match");
       matches = ['full match', 'arg1', 'arg2'];
-      patternRegexp = createSpyWithStubs("pattern regexp", {test: matches});
+      patternRegexp = createStubbedObject({test: matches});
       stepAttachmentContents = createSpy("step attachment contents");
-      step = createSpyWithStubs("step", {hasAttachment: null, getName: stepName, getAttachmentContents: stepAttachmentContents});
+      step = createStubbedObject({hasAttachment: null, getName: stepName, getAttachmentContents: stepAttachmentContents});
       scenario = createSpy("scenario");
-      spyOn(stepDefinition, 'getPatternRegexp').and.returnValue(patternRegexp);
-      spyOnStub(patternRegexp, 'exec').and.returnValue(matches);
-      spyOnStub(step, 'getArguments').and.returnValue([]);
+      sinon.stub(stepDefinition, 'getPatternRegexp').returns(patternRegexp);
+      sinon.stubStub(patternRegexp, 'exec').returns(matches);
+      sinon.stubStub(step, 'getArguments').returns([]);
     });
 
     it("executes the pattern regexp against the step name", function () {
       stepDefinition.buildInvocationParameters(step, scenario);
-      expect(patternRegexp.exec).toHaveBeenCalledWith(stepName);
+      expect(patternRegexp.exec).to.have.been.calledWith(stepName);
     });
 
     it("returns the arg", function () {
       var result = stepDefinition.buildInvocationParameters(step, scenario);
-      expect(result).toEqual(['arg1', 'arg2']);
+      expect(result).to.eql(['arg1', 'arg2']);
     });
 
     describe("when the step has an doc string argument", function () {
       beforeEach(function () {
-        var docStringArgument = createSpyWithStubs('doc string', {getContent: 'doc string content', getType: 'DocString'});
-        step.getArguments.and.returnValue([docStringArgument]);
+        var docStringArgument = createStubbedObject('doc string', {getContent: 'doc string content', getType: 'DocString'});
+        step.getArguments.returns([docStringArgument]);
       });
 
       it("adds the doc string content as an argument", function () {
         var result = stepDefinition.buildInvocationParameters(step, scenario);
-        expect(result).toEqual(['arg1', 'arg2', 'doc string content']);
+        expect(result).to.eql(['arg1', 'arg2', 'doc string content']);
       });
     });
 
@@ -282,13 +282,13 @@ describe("Cucumber.SupportCode.StepDefinition", function () {
       var dataTableArgument;
 
       beforeEach(function () {
-        dataTableArgument = createSpyWithStubs('data table', {getType: 'DataTable'});
-        step.getArguments.and.returnValue([dataTableArgument]);
+        dataTableArgument = createStubbedObject('data table', {getType: 'DataTable'});
+        step.getArguments.returns([dataTableArgument]);
       });
 
       it("adds the data table as an argument", function () {
         var result = stepDefinition.buildInvocationParameters(step, scenario);
-        expect(result).toEqual(['arg1', 'arg2', dataTableArgument]);
+        expect(result).to.eql(['arg1', 'arg2', dataTableArgument]);
       });
     });
   });
@@ -314,7 +314,7 @@ describe("Cucumber.SupportCode.StepDefinition", function () {
 
       it("calls back as a failure with the exception", function () {
         exceptionHandler(exception);
-        expect(codeCallback).toHaveBeenCalledWith(exception);
+        expect(codeCallback).to.have.been.calledWith(exception);
       });
     });
   });

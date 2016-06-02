@@ -1,4 +1,4 @@
-require('../../support/spec_helper');
+
 
 describe("Cucumber.Runtime.EventBroadcaster", function () {
   var Cucumber = requireLib('cucumber');
@@ -6,7 +6,7 @@ describe("Cucumber.Runtime.EventBroadcaster", function () {
 
   var createListener = function createListener(name) {
     var listener = createSpy(name);
-    spyOnStub(listener, 'hear').and.callFake(function (event, cb) { cb(); });
+    sinon.stubStub(listener, 'hear').and.callFake(function (event, cb) { cb(); });
     return listener;
   };
 
@@ -21,23 +21,23 @@ describe("Cucumber.Runtime.EventBroadcaster", function () {
     beforeEach(function (done) {
       preEvent = createSpy("pre event");
       postEvent = createSpy("post event");
-      event = createSpyWithStubs("event", {replicateAsPostEvent: postEvent, replicateAsPreEvent: preEvent});
+      event = createStubbedObject({replicateAsPostEvent: postEvent, replicateAsPreEvent: preEvent});
       userFunction = createSpy('user function').and.callFake(function(cb) { cb(); });
       eventBroadcaster.broadcastAroundEvent(event, userFunction, done);
     });
 
     it("broadcasts the before event", function () {
-      expect(listeners[0].hear).toHaveBeenCalledWith(preEvent, jasmine.any(Function));
-      expect(listeners[1].hear).toHaveBeenCalledWith(preEvent, jasmine.any(Function));
+      expect(listeners[0].hear).to.have.been.calledWith(preEvent, jasmine.any(Function));
+      expect(listeners[1].hear).to.have.been.calledWith(preEvent, jasmine.any(Function));
     });
 
     it("calls the user function", function () {
-      expect(userFunction).toHaveBeenCalled();
+      expect(userFunction).to.have.been.called;
     });
 
     it("broadcasts the after event", function () {
-      expect(listeners[0].hear).toHaveBeenCalledWith(postEvent, jasmine.any(Function));
-      expect(listeners[1].hear).toHaveBeenCalledWith(postEvent, jasmine.any(Function));
+      expect(listeners[0].hear).to.have.been.calledWith(postEvent, jasmine.any(Function));
+      expect(listeners[1].hear).to.have.been.calledWith(postEvent, jasmine.any(Function));
     });
   });
 
@@ -50,8 +50,8 @@ describe("Cucumber.Runtime.EventBroadcaster", function () {
     });
 
     it("broadcasts the event", function () {
-      expect(listeners[0].hear).toHaveBeenCalledWith(event, jasmine.any(Function));
-      expect(listeners[1].hear).toHaveBeenCalledWith(event, jasmine.any(Function));
+      expect(listeners[0].hear).to.have.been.calledWith(event, jasmine.any(Function));
+      expect(listeners[1].hear).to.have.been.calledWith(event, jasmine.any(Function));
     });
   });
 });
