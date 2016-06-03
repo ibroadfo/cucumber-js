@@ -1,4 +1,3 @@
-
 require('../../support/configurations_shared_examples.js');
 
 describe("Cucumber.Cli.Configuration", function () {
@@ -20,8 +19,8 @@ describe("Cucumber.Cli.Configuration", function () {
     var formatter, formatterOptions;
 
     beforeEach(function () {
-      var shouldUseColors = createSpy("use colors");
-      var snippetSyntax = createSpy("snippet syntax");
+      var shouldUseColors = "use colors";
+      var snippetSyntax = "snippet syntax";
       formatterOptions = {
         snippetSyntax: snippetSyntax,
         stream: process.stdout,
@@ -33,8 +32,16 @@ describe("Cucumber.Cli.Configuration", function () {
       sinon.stub(Cucumber.Listener, 'PrettyFormatter');
       sinon.stub(Cucumber.Listener, 'SummaryFormatter');
       sinon.stub(Cucumber.SupportCode.StepDefinitionSnippetBuilder, 'JavaScriptSyntax').returns(snippetSyntax);
-      formatter = createSpy("formatter");
+      formatter = "formatter";
     });
+
+    afterEach(function(){
+      Cucumber.Listener.JsonFormatter.restore()
+      Cucumber.Listener.ProgressFormatter.restore()
+      Cucumber.Listener.PrettyFormatter.restore()
+      Cucumber.Listener.SummaryFormatter.restore()
+      Cucumber.SupportCode.StepDefinitionSnippetBuilder.JavaScriptSyntax.restore()
+    })
 
     describe("when the formatter name is \"json\"", function () {
       beforeEach(function () {
@@ -104,13 +111,18 @@ describe("Cucumber.Cli.Configuration", function () {
       var fd;
 
       beforeEach(function () {
-        fd = createSpy('fd');
+        fd = 'fd';
         sinon.stub(fs, 'openSync').returns(fd);
 
-        var stream = createSpy('stream');
+        var stream = 'stream';
         formatterOptions.stream = stream;
         sinon.stub(fs, 'createWriteStream').returns(stream);
       });
+
+      afterEach(function() {
+        fs.openSync.restore()
+        fs.createWriteStream.restore()
+      })
 
       describe("when the output file does not include a colon", function() {
         beforeEach(function () {
@@ -171,7 +183,7 @@ describe("Cucumber.Cli.Configuration", function () {
       });
 
       it("throws an exceptions", function () {
-        expect(configuration.getFormatters).toThrow();
+        expect(configuration.getFormatters).to.throw();
       });
     });
   });

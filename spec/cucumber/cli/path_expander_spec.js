@@ -1,15 +1,25 @@
-
-
 describe("Cucumber.Cli.ArgumentParser.PathExpander", function () {
   var PathExpander = requireLib('cucumber').Cli.PathExpander;
+  var fsExtra = require('fs-extra');
+  var tmp = require('tmp');
 
   describe("expandPathsWithExtensions", function () {
     var unexpandedPaths, extensions, expandedPaths;
 
+    describe("path is a directory which contains ", function() {
+
+    });
+
+    describe("", function() {
+
+    })
+
     beforeEach(function () {
-      extensions      = createSpy("extensions");
-      unexpandedPaths = [createSpy("unexpanded path 1"), createSpy("unexpanded path 2")];
-      expandedPaths   = [createSpy("expanded path 1-1"), createSpy("expanded path 1-2"), createSpy("expanded path 2-1")];
+      var tmpDir = tmp.dir('')
+      fsExtra.outputFileSync('')
+      extensions      = "extensions";
+      unexpandedPaths = ["unexpanded path 1", "unexpanded path 2"];
+      expandedPaths   = ["expanded path 1-1", "expanded path 1-2", "expanded path 2-1"];
       sinon.stub(PathExpander, 'expandPathWithExtensions').and.returnValues([expandedPaths[0], expandedPaths[1]], [expandedPaths[1], expandedPaths[2]]);
     });
 

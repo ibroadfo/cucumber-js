@@ -6,14 +6,14 @@ global.itBehavesLikeAllCucumberConfigurations = function (context) {
   });
 
   it("supplies the feature sources", function () {
-    expect(configuration.getFeatureSources).toBeAFunction ();
+    expect(configuration.getFeatureSources).to.be.a('function');
   });
 
   it("supplies the support code library", function () {
-    expect(configuration.getSupportCodeLibrary).toBeAFunction ();
+    expect(configuration.getSupportCodeLibrary).to.be.a('function');
   });
 
   it("supplies the AST filter", function () {
-    expect(configuration.getAstFilter).toBeAFunction ();
+    expect(configuration.getAstFilter).to.be.a('function');
   });
 };

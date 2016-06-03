@@ -1,5 +1,3 @@
-
-
 describe("Cucumber.Cli.FeaturePathExpander", function () {
   var Cucumber            = requireLib('cucumber');
   var FeaturePathExpander = Cucumber.Cli.FeaturePathExpander;
@@ -10,14 +8,15 @@ describe("Cucumber.Cli.FeaturePathExpander", function () {
 
     beforeEach(function () {
       paths         = ['a', 'b:1'];
-      expandedPaths = createSpy("expanded paths");
-      sinon.stub(PathExpander, 'expandPathsWithExtensions').returns(expandedPaths);
+      expandedPaths = "expanded paths";
+      sinon.stub(PathExpander, 'expandPathsWithExtensions')
+        .withArgs(['a', 'b'], ['feature'])
+        .returns(expandedPaths);
     });
 
-    it("asks the path expander to expand the paths with the glob matching feature files", function () {
-      FeaturePathExpander.expandPaths(paths);
-      expect(PathExpander.expandPathsWithExtensions).to.have.been.calledWith(['a', 'b'], ['feature']);
-    });
+    afterEach(function(){
+      PathExpander.expandPathsWithExtensions.restore()
+    })
 
     it("returns the expanded paths", function () {
       expect(FeaturePathExpander.expandPaths(paths)).to.equal(expandedPaths);
